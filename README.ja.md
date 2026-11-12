@@ -2,11 +2,13 @@
 
 [English](README.md) | 日本語
 
+> [!IMPORTANT]
+> **ghostty-tailor は個人による非公式プロジェクトです。Ghostty プロジェクトおよびその開発者とは一切関係がなく、公認・保守も受けていません。**
+> ghostty-tailor の不具合は Ghostty ではなく、[このリポジトリの Issues](https://github.com/dandelion0216/ghostty-tailor/issues) にご報告ください。
+
 [Ghostty](https://ghostty.org) の設定を GUI で仕立てるアプリです。すべての設定項目を一覧・変更でき、変更は起動中のターミナルにすぐ反映されます。
 
 > **ステータス:** 試作段階です。macOS では Homebrew でインストールできます（[インストール](#インストール)を参照）。
-
-> ghostty-tailor は有志による非公式プロジェクトであり、Ghostty プロジェクトとは関係ありません。
 
 ## なぜ作ったか
 
@@ -88,6 +90,12 @@ Ghostty がインストールされた環境で ghostty-tailor を起動しま�
 - [Go](https://go.dev) + [Wails](https://wails.io)（画面は素の HTML / CSS / JS）
 - macOS と Linux
 
+## 謝辞
+
+高速で丁寧に作られたターミナルを開発し、すべての設定項目に詳しい説明を書いてくださっている [Mitchell Hashimoto](https://github.com/mitchellh) さんと [Ghostty のコントリビューターの皆さま](https://github.com/ghostty-org/ghostty/graphs/contributors)に感謝いたします。ghostty-tailor が表示する設定項目と説明文は Ghostty から取得しており、プレビューするテーマも Ghostty に同梱されているものです。この仕事がなければ ghostty-tailor は存在しませんでした。
+
 ## ライセンス
 
 [MIT](LICENSE)
+
+同梱している Ghostty の設定説明文の日本語訳は、Ghostty（MIT License）の説明文をもとにしています。詳しくは [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) をご覧ください。

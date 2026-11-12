@@ -2,11 +2,13 @@
 
 English | [日本語](README.ja.md)
 
+> [!IMPORTANT]
+> **ghostty-tailor is an unofficial, independent project. It is not affiliated with, endorsed by, or maintained by the Ghostty project or its developers.**
+> Please report problems with ghostty-tailor to [this repository's issues](https://github.com/dandelion0216/ghostty-tailor/issues), not to Ghostty.
+
 A GUI for tailoring your [Ghostty](https://ghostty.org) configuration — browse every option, tweak it, and see the change in your running terminal right away.
 
 > **Status:** early prototype. Install it with Homebrew on macOS (see [Install](#install)).
-
-> ghostty-tailor is an unofficial community project and is not affiliated with the Ghostty project.
 
 ## Why
 
@@ -88,6 +90,12 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 - [Go](https://go.dev) + [Wails](https://wails.io) (plain HTML / CSS / JS frontend)
 - macOS and Linux
 
+## Acknowledgements
+
+Thank you to [Mitchell Hashimoto](https://github.com/mitchellh) and all [Ghostty contributors](https://github.com/ghostty-org/ghostty/graphs/contributors) for building such a fast, thoughtful terminal — and for documenting every config option so thoroughly. ghostty-tailor would not exist without that work: the option list and documentation it shows come straight from Ghostty, and the themes it previews are the ones Ghostty ships with.
+
 ## License
 
 [MIT](LICENSE)
+
+The bundled Japanese translations of Ghostty's option documentation are derived from Ghostty (MIT License). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
