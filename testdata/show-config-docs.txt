@@ -1,0 +1,49 @@
+# Set Ghostty's graphical user interface language to a language other than the
+# system default language. For example:
+# 
+#     language = de
+# 
+# Warning: This setting cannot be reloaded at runtime. To change the language
+# you must fully restart Ghostty.
+language = 
+
+# The font families to use.
+# 
+# This configuration can be repeated multiple times.
+font-family = 
+
+# Font size in points.
+font-size = 13
+
+# The style of the cursor. Valid values:
+# 
+#   * `block`
+#   * `bar`
+#   * `underline`
+#   * `block_hollow`
+cursor-style = block
+
+# Background color for the window.
+background = #282c34
+
+# Whether to blink the cursor.
+cursor-style-blink = true
+
+# Horizontal window padding. Changing this only affects new windows.
+window-padding-x = 2
+
+# The style of the macOS titlebar.
+macos-titlebar-style = transparent
+
+# Key bindings. The format is `trigger=action`.
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+
+# A theme to use.
+theme = 
+
+# An option with no category prefix.
+undo-timeout = 5s
+
+# Something new that ghostty-tailor does not know about.
+zzz-future-option = auto

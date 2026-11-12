@@ -32,6 +32,9 @@ type Result struct {
 	Set      map[string]string `json:"set"`
 }
 
+// reloadConfig is replaced in tests so they do not touch a running Ghostty.
+var reloadConfig = reloadGhostty
+
 func NewApp() *App { return &App{} }
 
 func (a *App) startup(ctx context.Context) {
@@ -129,7 +132,7 @@ func (a *App) apply(edit func()) Result {
 		_ = a.cfg.Save()
 		return Result{Message: msg(a.lang, "rejected") + strings.TrimSpace(out), Set: a.cfg.Values()}
 	}
-	reloaded, id, detail := reloadGhostty()
+	reloaded, id, detail := reloadConfig()
 	if reloaded {
 		id = "reloaded"
 	}
