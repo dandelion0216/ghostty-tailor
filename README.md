@@ -1,5 +1,7 @@
 # ghostty-tailor
 
+English | [日本語](README.ja.md)
+
 A GUI for tailoring your [Ghostty](https://ghostty.org) configuration — browse every option, tweak it, and see the change in your running terminal right away.
 
 > **Status:** early prototype. There is no packaged release yet; build it from source (see [Install](#install)). The UI is currently in Japanese.
