@@ -16,15 +16,15 @@ Ghostty の設定はテキストファイルで行います。柔軟な反面、
 
 | テーマ | 色 |
 |---|---|
-| ![テーマタブ](docs/images/theme.png) | ![色タブ](docs/images/color.png) |
+| ![テーマタブ](docs/images/ja/theme.png) | ![色タブ](docs/images/ja/color.png) |
 
 | フォント | ウィンドウ |
 |---|---|
-| ![フォントタブ](docs/images/font.png) | ![ウィンドウタブ](docs/images/window.png) |
+| ![フォントタブ](docs/images/ja/font.png) | ![ウィンドウタブ](docs/images/ja/window.png) |
 
 | 詳細設定 |
 |---|
-| ![詳細設定タブ](docs/images/advanced.png) |
+| ![詳細設定タブ](docs/images/ja/advanced.png) |
 
 ## 機能
 

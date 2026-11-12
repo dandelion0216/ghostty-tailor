@@ -16,15 +16,15 @@ Ghostty is configured with a plain text file. It is powerful, but it is hard to 
 
 | Theme | Colors |
 |---|---|
-| ![Theme tab](docs/images/theme.png) | ![Colors tab](docs/images/color.png) |
+| ![Theme tab](docs/images/en/theme.png) | ![Colors tab](docs/images/en/color.png) |
 
 | Font | Window |
 |---|---|
-| ![Font tab](docs/images/font.png) | ![Window tab](docs/images/window.png) |
+| ![Font tab](docs/images/en/font.png) | ![Window tab](docs/images/en/window.png) |
 
 | Advanced |
 |---|
-| ![Advanced tab](docs/images/advanced.png) |
+| ![Advanced tab](docs/images/en/advanced.png) |
 
 ## Features
 
