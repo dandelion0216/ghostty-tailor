@@ -44,7 +44,12 @@ func (c *ConfigFile) Load() error {
 	if err != nil {
 		return err
 	}
-	c.lines = strings.Split(strings.TrimRight(string(b), "\n"), "\n")
+	body := strings.TrimRight(string(b), "\n")
+	if body == "" {
+		c.lines = nil
+		return nil
+	}
+	c.lines = strings.Split(body, "\n")
 	return nil
 }
 
