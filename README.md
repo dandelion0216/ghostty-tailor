@@ -4,7 +4,7 @@ English | [日本語](README.ja.md)
 
 A GUI for tailoring your [Ghostty](https://ghostty.org) configuration — browse every option, tweak it, and see the change in your running terminal right away.
 
-> **Status:** early prototype. There is no packaged release yet; build it from source (see [Install](#install)). The UI is currently in Japanese.
+> **Status:** early prototype. There is no packaged release yet; build it from source (see [Install](#install)).
 
 > ghostty-tailor is an unofficial community project and is not affiliated with the Ghostty project.
 
@@ -31,6 +31,7 @@ Ghostty is configured with a plain text file. It is powerful, but it is hard to 
 - Browse and search every config option, with the documentation Ghostty ships with
 - Pick themes, colors and fonts visually
 - Apply changes to the running Ghostty instantly (live reload, macOS)
+- English and Japanese UI, including Japanese translations of the option documentation
 - Keep your existing config file readable — only the lines for the options you change are rewritten; comments and everything else stay as they are
 - Every change is checked with `ghostty +validate-config`; an invalid change is rolled back automatically
 
@@ -61,6 +62,7 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 | Window | Padding, opacity, blur, decorations, cursor style and startup / close behavior |
 | Advanced | Every option, grouped by category on the left, with a search box |
 
+- **Language:** switch between English and 日本語 with the menu at the top right. The first launch follows your OS language, and your choice is remembered. Option docs that changed in a newer Ghostty than the bundled translations are shown in English.
 - **Reset:** an option you have changed shows a reset button that removes its line from the config file, so Ghostty falls back to the default.
 - **Reload badges:** some options only take effect in new windows or after restarting Ghostty; they are labeled as such.
 - **Automatic backup:** on first launch your config file is copied to `config.ghostty.bak-tailor` next to it.

@@ -4,6 +4,8 @@ export namespace main {
 	    key: string;
 	    summary: string;
 	    doc: string;
+	    summaryJa?: string;
+	    docJa?: string;
 	    default: string;
 	    kind: string;
 	    choices: string[];
@@ -19,6 +21,8 @@ export namespace main {
 	        this.key = source["key"];
 	        this.summary = source["summary"];
 	        this.doc = source["doc"];
+	        this.summaryJa = source["summaryJa"];
+	        this.docJa = source["docJa"];
 	        this.default = source["default"];
 	        this.kind = source["kind"];
 	        this.choices = source["choices"];
@@ -50,6 +54,7 @@ export namespace main {
 	    backupPath: string;
 	    options: Option[];
 	    set: Record<string, string>;
+	    lang: string;
 	    error: string;
 	
 	    static createFrom(source: any = {}) {
@@ -63,6 +68,7 @@ export namespace main {
 	        this.backupPath = source["backupPath"];
 	        this.options = this.convertValues(source["options"], Option);
 	        this.set = source["set"];
+	        this.lang = source["lang"];
 	        this.error = source["error"];
 	    }
 	

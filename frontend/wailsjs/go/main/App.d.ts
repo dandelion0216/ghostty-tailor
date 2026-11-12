@@ -8,6 +8,8 @@ export function Load():Promise<main.State>;
 
 export function ResetOption(arg1:string):Promise<main.Result>;
 
+export function SetLang(arg1:string):Promise<main.Result>;
+
 export function SetOption(arg1:string,arg2:string):Promise<main.Result>;
 
 export function Themes():Promise<Array<main.Theme>>;

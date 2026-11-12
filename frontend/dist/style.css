@@ -19,7 +19,8 @@ header { display: flex; align-items: center; gap: 24px; padding: 10px 20px; bord
 nav { display: flex; gap: 2px; --wails-draggable: no-drag; }
 nav button { border: 0; background: none; color: var(--fg); padding: 6px 14px; border-radius: 8px; font: inherit; cursor: pointer; }
 nav button.on { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
-#path { margin-left: auto; text-align: right; }
+#lang { margin-left: auto; --wails-draggable: no-drag; }
+#path { flex-basis: 100%; order: 1; margin-top: -4px; }
 main { flex: 1; overflow: auto; }
 .scroll { padding: 16px 20px 40px; }
 

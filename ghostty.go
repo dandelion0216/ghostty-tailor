@@ -13,14 +13,16 @@ import (
 
 // Option is one Ghostty config key, described from `ghostty +show-config --default --docs`.
 type Option struct {
-	Key      string   `json:"key"`
-	Summary  string   `json:"summary"`
-	Doc      string   `json:"doc"`
-	Default  string   `json:"default"`
-	Kind     string   `json:"kind"` // bool, enum, color, number, text, repeat
-	Choices  []string `json:"choices"`
-	Category string   `json:"category"`
-	Reload   string   `json:"reload"` // live, newwindow, restart
+	Key       string   `json:"key"`
+	Summary   string   `json:"summary"`
+	Doc       string   `json:"doc"`
+	SummaryJa string   `json:"summaryJa,omitempty"`
+	DocJa     string   `json:"docJa,omitempty"`
+	Default   string   `json:"default"`
+	Kind      string   `json:"kind"` // bool, enum, color, number, text, repeat
+	Choices   []string `json:"choices"`
+	Category  string   `json:"category"` // id; the frontend shows a localized label
+	Reload    string   `json:"reload"`   // live, newwindow, restart
 }
 
 type Theme struct {
@@ -30,6 +32,8 @@ type Theme struct {
 	Palette    []string `json:"palette"`
 	Dark       bool     `json:"dark"`
 }
+
+var errGhosttyNotFound = errors.New("ghostty not found")
 
 func findGhostty() (string, error) {
 	if p, err := exec.LookPath("ghostty"); err == nil {
@@ -44,7 +48,7 @@ func findGhostty() (string, error) {
 			return p, nil
 		}
 	}
-	return "", errors.New("ghostty コマンドが見つかりません")
+	return "", errGhosttyNotFound
 }
 
 func runGhostty(bin string, args ...string) (string, error) {
@@ -157,15 +161,15 @@ var categories = []struct {
 	name     string
 	prefixes []string
 }{
-	{"色・テーマ", []string{"search-", "theme", "background", "foreground", "palette", "selection-", "minimum-contrast", "bold-color", "bold-is-bright", "faint-opacity", "unfocused-split", "split-divider-color", "cursor-color", "cursor-text", "cursor-opacity", "alpha-blending"}},
-	{"フォント", []string{"font-", "adjust-", "grapheme-", "freetype-"}},
-	{"カーソル", []string{"cursor-"}},
-	{"ウィンドウ", []string{"window-", "resize-overlay", "focus-follows", "split-", "maximize", "fullscreen", "title", "undo-timeout", "background-blur"}},
-	{"マウス・クリップボード", []string{"mouse-", "click-", "clipboard-", "copy-on-select", "link", "right-click", "scroll"}},
-	{"キー操作", []string{"keybind", "key-", "quick-terminal", "command-palette"}},
-	{"シェル・起動", []string{"command", "initial-command", "shell-integration", "working-directory", "env", "input", "wait-after-command", "abnormal-command", "term", "scrollback", "osc-", "image-storage", "confirm-close", "quit-after", "notify", "desktop-notifications", "bell-", "app-notifications", "progress", "config-"}},
-	{"macOS", []string{"macos-"}},
-	{"Linux (GTK)", []string{"gtk-", "linux-", "adw-", "x11-", "async-backend", "class", "language"}},
+	{"colors", []string{"search-", "theme", "background", "foreground", "palette", "selection-", "minimum-contrast", "bold-color", "bold-is-bright", "faint-opacity", "unfocused-split", "split-divider-color", "cursor-color", "cursor-text", "cursor-opacity", "alpha-blending"}},
+	{"font", []string{"font-", "adjust-", "grapheme-", "freetype-"}},
+	{"cursor", []string{"cursor-"}},
+	{"window", []string{"window-", "resize-overlay", "focus-follows", "split-", "maximize", "fullscreen", "title", "undo-timeout", "background-blur"}},
+	{"mouse", []string{"mouse-", "click-", "clipboard-", "copy-on-select", "link", "right-click", "scroll"}},
+	{"keys", []string{"keybind", "key-", "quick-terminal", "command-palette"}},
+	{"shell", []string{"command", "initial-command", "shell-integration", "working-directory", "env", "input", "wait-after-command", "abnormal-command", "term", "scrollback", "osc-", "image-storage", "confirm-close", "quit-after", "notify", "desktop-notifications", "bell-", "app-notifications", "progress", "config-"}},
+	{"macos", []string{"macos-"}},
+	{"linux", []string{"gtk-", "linux-", "adw-", "x11-", "async-backend", "class", "language"}},
 }
 
 func categorize(key string) string {
@@ -176,7 +180,7 @@ func categorize(key string) string {
 			}
 		}
 	}
-	return "その他"
+	return "other"
 }
 
 func themeDirs(bin string) []string {
@@ -287,10 +291,11 @@ func parseFonts(out string) []string {
 	return fonts
 }
 
-// reloadGhostty asks the running Ghostty to reload its config.
-func reloadGhostty() (bool, string) {
+// reloadGhostty asks the running Ghostty to reload its config. It returns a
+// message id (see messages) and extra detail when the reload did not happen.
+func reloadGhostty() (bool, string, string) {
 	if runtime.GOOS != "darwin" {
-		return false, "Linux での即時反映は試作品では未対応です（Ghostty で Ctrl+Shift+, を押してください）"
+		return false, "linuxNoReload", ""
 	}
 	script := `if application "Ghostty" is running then
 	tell application "Ghostty"
@@ -306,11 +311,11 @@ return "notrunning"`
 	res := strings.TrimSpace(string(out))
 	switch {
 	case err != nil:
-		return false, "Ghostty への再読み込み指示に失敗しました: " + res
+		return false, "reloadFailed", res
 	case res == "notrunning":
-		return false, "Ghostty が起動していないため、保存のみ行いました"
+		return false, "notRunning", ""
 	case res == "noterminal":
-		return false, "Ghostty のウィンドウがないため、保存のみ行いました"
+		return false, "noTerminal", ""
 	}
-	return true, ""
+	return true, "", ""
 }

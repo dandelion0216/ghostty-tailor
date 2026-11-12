@@ -14,6 +14,10 @@ export function ResetOption(arg1) {
   return window['go']['main']['App']['ResetOption'](arg1);
 }
 
+export function SetLang(arg1) {
+  return window['go']['main']['App']['SetLang'](arg1);
+}
+
 export function SetOption(arg1, arg2) {
   return window['go']['main']['App']['SetOption'](arg1, arg2);
 }

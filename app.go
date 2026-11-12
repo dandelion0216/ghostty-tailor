@@ -12,6 +12,7 @@ type App struct {
 	bin    string
 	cfg    *ConfigFile
 	backup string
+	lang   string
 }
 
 type State struct {
@@ -20,6 +21,7 @@ type State struct {
 	BackupPath string            `json:"backupPath"`
 	Options    []Option          `json:"options"`
 	Set        map[string]string `json:"set"`
+	Lang       string            `json:"lang"`
 	Error      string            `json:"error"`
 }
 
@@ -35,15 +37,20 @@ func NewApp() *App { return &App{} }
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	a.cfg = &ConfigFile{Path: defaultConfigPath()}
+	if s := loadSettings(); s.Lang != "" {
+		a.lang = normalizeLang(s.Lang)
+	} else {
+		a.lang = detectLang()
+	}
 }
 
 func (a *App) Load() State {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	st := State{ConfigPath: a.cfg.Path, Set: map[string]string{}}
+	st := State{ConfigPath: a.cfg.Path, Set: map[string]string{}, Lang: a.lang}
 	bin, err := findGhostty()
 	if err != nil {
-		st.Error = err.Error()
+		st.Error = msg(a.lang, "notFound")
 		return st
 	}
 	a.bin = bin
@@ -52,12 +59,13 @@ func (a *App) Load() State {
 	}
 	docs, err := runGhostty(bin, "+show-config", "--default", "--docs")
 	if err != nil {
-		st.Error = "設定項目の読み込みに失敗しました: " + err.Error()
+		st.Error = msg(a.lang, "loadOptions") + err.Error()
 		return st
 	}
 	st.Options = parseDocs(docs)
+	applyDocTranslations(st.Options)
 	if err := a.cfg.Load(); err != nil {
-		st.Error = "設定ファイルを読めません: " + err.Error()
+		st.Error = msg(a.lang, "readConfig") + err.Error()
 		return st
 	}
 	st.Set = a.cfg.Values()
@@ -90,6 +98,17 @@ func (a *App) SetOption(key, value string) Result {
 	})
 }
 
+// SetLang switches the language of backend messages and remembers it for the next launch.
+func (a *App) SetLang(lang string) Result {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	a.lang = normalizeLang(lang)
+	if err := saveSettings(Settings{Lang: a.lang}); err != nil {
+		return Result{Message: msg(a.lang, "settingsFailed") + err.Error()}
+	}
+	return Result{OK: true}
+}
+
 func (a *App) ResetOption(key string) Result {
 	return a.apply(func() { a.cfg.Unset(key) })
 }
@@ -103,16 +122,16 @@ func (a *App) apply(edit func()) Result {
 	before := append([]string(nil), a.cfg.lines...)
 	edit()
 	if err := a.cfg.Save(); err != nil {
-		return Result{Message: "保存に失敗しました: " + err.Error()}
+		return Result{Message: msg(a.lang, "saveFailed") + err.Error()}
 	}
 	if out, err := runGhosttyCombined(a.bin, "+validate-config", "--config-file="+a.cfg.Path); err != nil {
 		a.cfg.lines = before
 		_ = a.cfg.Save()
-		return Result{Message: "Ghostty がこの値を受け付けなかったため元に戻しました: " + strings.TrimSpace(out), Set: a.cfg.Values()}
+		return Result{Message: msg(a.lang, "rejected") + strings.TrimSpace(out), Set: a.cfg.Values()}
 	}
-	reloaded, msg := reloadGhostty()
+	reloaded, id, detail := reloadGhostty()
 	if reloaded {
-		msg = "保存して Ghostty に反映しました"
+		id = "reloaded"
 	}
-	return Result{OK: true, Message: msg, Reloaded: reloaded, Set: a.cfg.Values()}
+	return Result{OK: true, Message: msg(a.lang, id) + detail, Reloaded: reloaded, Set: a.cfg.Values()}
 }
