@@ -1,0 +1,19 @@
+name: Feature request
+description: Suggest an idea for ghostty-tailor
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: English or Japanese is fine (日本語でも大丈夫です). Please check the [open issues](https://github.com/dandelion0216/ghostty-tailor/issues) first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to do?
+      description: The situation and what is hard to do today.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: How ghostty-tailor could help. Screenshots or sketches are welcome.

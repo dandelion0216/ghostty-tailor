@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Problems with Ghostty itself
+    url: https://github.com/ghostty-org/ghostty/discussions
+    about: ghostty-tailor is unofficial. Please report Ghostty bugs to the Ghostty project, and only ghostty-tailor bugs here.

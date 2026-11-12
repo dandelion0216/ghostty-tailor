@@ -94,6 +94,10 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 
 Thank you to [Mitchell Hashimoto](https://github.com/mitchellh) and all [Ghostty contributors](https://github.com/ghostty-org/ghostty/graphs/contributors) for building such a fast, thoughtful terminal — and for documenting every config option so thoroughly. ghostty-tailor would not exist without that work: the option list and documentation it shows come straight from Ghostty, and the themes it previews are the ones Ghostty ships with.
 
+## Contributing
+
+Bug reports, ideas and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). English or Japanese is fine.
+
 ## License
 
 [MIT](LICENSE)

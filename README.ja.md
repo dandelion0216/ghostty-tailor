@@ -94,6 +94,10 @@ Ghostty がインストールされた環境で ghostty-tailor を起動しま�
 
 高速で丁寧に作られたターミナルを開発し、すべての設定項目に詳しい説明を書いてくださっている [Mitchell Hashimoto](https://github.com/mitchellh) さんと [Ghostty のコントリビューターの皆さま](https://github.com/ghostty-org/ghostty/graphs/contributors)に感謝いたします。ghostty-tailor が表示する設定項目と説明文は Ghostty から取得しており、プレビューするテーマも Ghostty に同梱されているものです。この仕事がなければ ghostty-tailor は存在しませんでした。
 
+## コントリビュート
+
+不具合の報告、要望、プルリクエストを歓迎します。詳しくは [CONTRIBUTING.md](CONTRIBUTING.md) をご覧ください（英語・日本語どちらでも大丈夫です）。
+
 ## ライセンス
 
 [MIT](LICENSE)

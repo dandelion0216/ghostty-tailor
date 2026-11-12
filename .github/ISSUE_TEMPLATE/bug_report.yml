@@ -1,0 +1,52 @@
+name: Bug report
+description: Something in ghostty-tailor does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! English or Japanese is fine (日本語でも大丈夫です).
+        If the problem also happens without ghostty-tailor, it is probably a Ghostty issue — please report it to the Ghostty project instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the Colors tab
+        2. Change background to ...
+        3. ...
+  - type: input
+    id: version
+    attributes:
+      label: ghostty-tailor version
+      placeholder: "v0.1.0 (Homebrew) / commit abc1234 (source)"
+    validations:
+      required: true
+  - type: input
+    id: ghostty
+    attributes:
+      label: Ghostty version
+      description: Shown next to the app name at the top left, or `ghostty +version`
+      placeholder: "Ghostty 1.4.0"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: "macOS 26.1 / Ubuntu 24.04"
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant config lines (optional)
+      description: The lines of your Ghostty config related to the problem. Remove anything private.
+      render: ini
