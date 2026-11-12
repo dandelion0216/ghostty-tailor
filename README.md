@@ -4,7 +4,7 @@ English | [日本語](README.ja.md)
 
 A GUI for tailoring your [Ghostty](https://ghostty.org) configuration — browse every option, tweak it, and see the change in your running terminal right away.
 
-> **Status:** early prototype. There is no packaged release yet; build it from source (see [Install](#install)).
+> **Status:** early prototype. Install it with Homebrew on macOS (see [Install](#install)).
 
 > ghostty-tailor is an unofficial community project and is not affiliated with the Ghostty project.
 
@@ -37,7 +37,23 @@ Ghostty is configured with a plain text file. It is powerful, but it is hard to 
 
 ## Install
 
-Requirements: [Ghostty](https://ghostty.org) (1.x), [Go](https://go.dev) and the [Wails v2 CLI](https://wails.io). Node.js is not needed.
+### Homebrew (macOS)
+
+```sh
+brew install dandelion0216/tap/ghostty-tailor
+```
+
+Then start it with `ghostty-tailor`. The app is built from source on your Mac during installation (Go is installed automatically as a build dependency), so macOS does not block it even though it is not notarized. To show it in Launchpad and Spotlight:
+
+```sh
+mkdir -p ~/Applications && ln -sf "$(brew --prefix)/opt/ghostty-tailor/ghostty-tailor.app" ~/Applications/
+```
+
+Requires [Ghostty](https://ghostty.org) 1.x.
+
+### From source
+
+Requirements: [Go](https://go.dev) and the [Wails v2 CLI](https://wails.io). Node.js is not needed.
 
 ```sh
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
@@ -47,8 +63,6 @@ wails build -clean
 ```
 
 On macOS the app is created at `build/bin/ghostty-tailor.app`. On Linux the binary is `build/bin/ghostty-tailor` (Wails needs GTK and WebKitGTK; see the [Wails installation guide](https://wails.io/docs/gettingstarted/installation)). Linux builds have not been tested yet.
-
-Homebrew distribution is planned.
 
 ## Usage
 

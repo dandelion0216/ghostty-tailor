@@ -4,7 +4,7 @@
 
 [Ghostty](https://ghostty.org) の設定を GUI で仕立てるアプリです。すべての設定項目を一覧・変更でき、変更は起動中のターミナルにすぐ反映されます。
 
-> **ステータス:** 試作段階です。配布用のリリースはまだないため、ソースからビルドしてください（[インストール](#インストール)を参照）。
+> **ステータス:** 試作段階です。macOS では Homebrew でインストールできます（[インストール](#インストール)を参照）。
 
 > ghostty-tailor は有志による非公式プロジェクトであり、Ghostty プロジェクトとは関係ありません。
 
@@ -37,7 +37,23 @@ Ghostty の設定はテキストファイルで行います。柔軟な反面、
 
 ## インストール
 
-必要なもの: [Ghostty](https://ghostty.org)（1.x）、[Go](https://go.dev)、[Wails v2 CLI](https://wails.io)。Node.js は不要です。
+### Homebrew（macOS）
+
+```sh
+brew install dandelion0216/tap/ghostty-tailor
+```
+
+インストール後は `ghostty-tailor` で起動できます。インストール時にお使いの Mac 上でソースからビルドするため（ビルドに使う Go は自動で入ります）、Apple の公証を受けていないアプリでも macOS に起動を止められません。Launchpad や Spotlight に表示したい場合は、次のコマンドを実行してください。
+
+```sh
+mkdir -p ~/Applications && ln -sf "$(brew --prefix)/opt/ghostty-tailor/ghostty-tailor.app" ~/Applications/
+```
+
+[Ghostty](https://ghostty.org) 1.x が必要です。
+
+### ソースからビルド
+
+必要なもの: [Go](https://go.dev)、[Wails v2 CLI](https://wails.io)。Node.js は不要です。
 
 ```sh
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
@@ -47,8 +63,6 @@ wails build -clean
 ```
 
 macOS では `build/bin/ghostty-tailor.app` が作られます。Linux では `build/bin/ghostty-tailor` が作られます（GTK と WebKitGTK が必要です。[Wails のインストールガイド](https://wails.io/docs/gettingstarted/installation)を参照）。Linux でのビルドはまだ検証していません。
-
-Homebrew での配布を予定しています。
 
 ## 使い方
 

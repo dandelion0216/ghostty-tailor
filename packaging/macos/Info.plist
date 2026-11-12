@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Used to assemble ghostty-tailor.app without the Wails CLI (e.g. by the Homebrew formula).
+     The formula replaces 0.0.0 with the release version. -->
+<plist version="1.0">
+<dict>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleName</key>
+    <string>ghostty-tailor</string>
+    <key>CFBundleExecutable</key>
+    <string>ghostty-tailor</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.github.dandelion0216.ghostty-tailor</string>
+    <key>CFBundleVersion</key>
+    <string>0.0.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.0.0</string>
+    <key>CFBundleIconFile</key>
+    <string>iconfile</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.13.0</string>
+    <key>NSHighResolutionCapable</key>
+    <string>true</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright (c) dandelion0216. MIT License.</string>
+</dict>
+</plist>
