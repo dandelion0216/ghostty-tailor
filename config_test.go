@@ -180,3 +180,33 @@ func TestConfigBackupWithoutConfig(t *testing.T) {
 		t.Errorf("Backup() = %q, %v; want no backup and no error", dst, err)
 	}
 }
+
+func TestConfigSetAllReplacesRepeatedKeyInPlace(t *testing.T) {
+	c := writeConfig(t, sampleConfig)
+	c.SetAll("keybind", []string{"super+x=cut", "super+y=redo", "super+z=undo"})
+	want := `# My Ghostty config
+theme = Catppuccin Mocha
+
+# fonts
+font-family = "JetBrains Mono"
+font-size = 14
+keybind = super+x=cut
+keybind = super+y=redo
+keybind = super+z=undo
+`
+	if got := saveAndRead(t, c); got != want {
+		t.Errorf("file after SetAll:\n%s\nwant:\n%s", got, want)
+	}
+}
+
+func TestConfigSetAllAppendsAndRemoves(t *testing.T) {
+	c := writeConfig(t, "theme = Nord\n")
+	c.SetAll("palette", []string{"1=#ff0000", "9=#ff6b8b"})
+	if got := saveAndRead(t, c); got != "theme = Nord\npalette = 1=#ff0000\npalette = 9=#ff6b8b\n" {
+		t.Errorf("file after SetAll = %q", got)
+	}
+	c.SetAll("palette", nil)
+	if got := saveAndRead(t, c); got != "theme = Nord\n" {
+		t.Errorf("file after SetAll(nil) = %q", got)
+	}
+}

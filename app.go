@@ -13,6 +13,9 @@ type App struct {
 	cfg    *ConfigFile
 	backup string
 	lang   string
+
+	defaultKeys [][2]string // ghostty +list-keybinds --default, cached
+	actions     []string
 }
 
 type State struct {
@@ -110,6 +113,11 @@ func (a *App) SetLang(lang string) Result {
 		return Result{Message: msg(a.lang, "settingsFailed") + err.Error()}
 	}
 	return Result{OK: true}
+}
+
+// SetRepeated writes all values of a repeatable option such as palette.
+func (a *App) SetRepeated(key string, values []string) Result {
+	return a.apply(func() { a.cfg.SetAll(key, values) })
 }
 
 func (a *App) ResetOption(key string) Result {

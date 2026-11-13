@@ -117,3 +117,14 @@ func TestSetLangChangesMessagesAndPersists(t *testing.T) {
 		t.Errorf("message = %q, want Japanese", res.Message)
 	}
 }
+
+func TestSetRepeated(t *testing.T) {
+	a := newTestApp(t, "theme = Nord\npalette = 1=#111111\n", 0, reloadOK)
+	res := a.SetRepeated("palette", []string{"1=#ff0000", "9=#ff6b8b"})
+	if !res.OK || res.Set["palette"] != "1=#ff0000\n9=#ff6b8b" {
+		t.Errorf("result = %+v", res)
+	}
+	if got := readFile(t, a.cfg.Path); got != "theme = Nord\npalette = 1=#ff0000\npalette = 9=#ff6b8b\n" {
+		t.Errorf("config = %q", got)
+	}
+}

@@ -31,7 +31,8 @@ Ghostty is configured with a plain text file. It is powerful, but it is hard to 
 ## Features
 
 - Browse and search every config option, with the documentation Ghostty ships with
-- Pick themes, colors and fonts visually
+- Pick themes, colors and fonts visually, and edit the 16-color palette
+- Change keyboard shortcuts like in macOS System Settings: click a shortcut and press the new keys
 - Apply changes to the running Ghostty instantly (live reload, macOS)
 - English and Japanese UI, including Japanese translations of the option documentation
 - Keep your existing config file readable — only the lines for the options you change are rewritten; comments and everything else stay as they are
@@ -73,9 +74,10 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 | Tab | What you can do |
 |---|---|
 | Theme | Search the bundled themes (filter by dark / light) and click a card to apply it |
-| Colors | Set background, foreground, cursor and selection colors, opacity and split colors |
+| Colors | Edit the 16-color palette, and set background, foreground, cursor and selection colors, opacity and split colors |
 | Font | Choose a monospace font from `ghostty +list-fonts`, set its size and spacing, and check the preview |
 | Window | Padding, opacity, blur, decorations, cursor style and startup / close behavior |
+| Keys | Every shortcut, grouped like macOS keyboard settings. Click a shortcut and press new keys to change it, untick it to disable a default, or add a new one. Conflicts are replaced and reported |
 | Advanced | Every option, grouped by category on the left, with a search box |
 
 - **Language:** switch between English and 日本語 with the menu at the top right. The first launch follows your OS language, and your choice is remembered. Option docs that changed in a newer Ghostty than the bundled translations are shown in English.
@@ -83,7 +85,7 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 - **Reload badges:** some options only take effect in new windows or after restarting Ghostty; they are labeled as such.
 - **Automatic backup:** on first launch your config file is copied to `config.ghostty.bak-tailor` next to it.
 - **Live reload (macOS):** after each change ghostty-tailor asks Ghostty to reload its config via AppleScript. The first time, macOS asks whether ghostty-tailor may control Ghostty — allow it to get live reload. If you deny it, changes are still saved and take effect the next time Ghostty reloads its config. Live reload on Linux is not supported yet; reload manually in Ghostty (default: `Ctrl+Shift+,`).
-- Multi-line options such as `keybind` and `palette` are shown but cannot be edited yet.
+- Other multi-line options are shown in the Advanced tab but cannot be edited there yet.
 
 ## Stack
 

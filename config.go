@@ -105,6 +105,33 @@ func (c *ConfigFile) Set(key, value string) {
 	c.lines = out
 }
 
+// SetAll replaces every line for a repeatable key (palette, keybind, ...) with
+// one line per value, placed where the first existing line was (or at the end).
+// An empty list removes the key.
+func (c *ConfigFile) SetAll(key string, values []string) {
+	var out []string
+	placed := false
+	put := func() {
+		for _, v := range values {
+			out = append(out, key+" = "+v)
+		}
+		placed = true
+	}
+	for _, l := range c.lines {
+		if k, _, ok := parseLine(l); ok && k == key {
+			if !placed {
+				put()
+			}
+			continue
+		}
+		out = append(out, l)
+	}
+	if !placed {
+		put()
+	}
+	c.lines = out
+}
+
 func (c *ConfigFile) Unset(key string) {
 	var out []string
 	for _, l := range c.lines {

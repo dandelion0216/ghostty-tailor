@@ -1,5 +1,61 @@
 export namespace main {
 	
+	export class KeyRow {
+	    id: string;
+	    action: string;
+	    trigger: string;
+	    defaultTrigger: string;
+	    enabled: boolean;
+	    origin: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new KeyRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.action = source["action"];
+	        this.trigger = source["trigger"];
+	        this.defaultTrigger = source["defaultTrigger"];
+	        this.enabled = source["enabled"];
+	        this.origin = source["origin"];
+	    }
+	}
+	export class KeybindState {
+	    rows: KeyRow[];
+	    actions: string[];
+	    extra: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new KeybindState(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rows = this.convertValues(source["rows"], KeyRow);
+	        this.actions = source["actions"];
+	        this.extra = source["extra"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class Option {
 	    key: string;
 	    summary: string;
