@@ -79,11 +79,12 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 | Window | Padding, opacity, blur, decorations, cursor style and startup / close behavior |
 | Keys | Every shortcut, grouped like macOS keyboard settings. Click a shortcut and press new keys to change it, untick it to disable a default, or add a new one. Conflicts are replaced and reported |
 | Advanced | Every option, grouped by category on the left, with a search box |
+| History | Export your config to a file or import one (with a list of what will change), and restore any of the last 50 states saved before each change |
 
 - **Language:** switch between English and 日本語 with the menu at the top right. The first launch follows your OS language, and your choice is remembered. Option docs that changed in a newer Ghostty than the bundled translations are shown in English.
 - **Reset:** an option you have changed shows a reset button that removes its line from the config file, so Ghostty falls back to the default.
 - **Reload badges:** some options only take effect in new windows or after restarting Ghostty; they are labeled as such.
-- **Automatic backup:** on first launch your config file is copied to `config.ghostty.bak-tailor` next to it.
+- **Automatic backup:** on first launch your config file is copied to `config.ghostty.bak-tailor` next to it. After that, the state before each change is kept in the History tab (stored in `~/Library/Application Support/ghostty-tailor/history/` on macOS, `~/.config/ghostty-tailor/history/` on Linux).
 - **Live reload (macOS):** after each change ghostty-tailor asks Ghostty to reload its config via AppleScript. The first time, macOS asks whether ghostty-tailor may control Ghostty — allow it to get live reload. If you deny it, changes are still saved and take effect the next time Ghostty reloads its config. Live reload on Linux is not supported yet; reload manually in Ghostty (default: `Ctrl+Shift+,`).
 - Other multi-line options are shown in the Advanced tab but cannot be edited there yet.
 
