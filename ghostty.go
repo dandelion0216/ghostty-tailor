@@ -295,7 +295,7 @@ func parseFonts(out string) []string {
 // message id (see messages) and extra detail when the reload did not happen.
 func reloadGhostty() (bool, string, string) {
 	if runtime.GOOS != "darwin" {
-		return false, "linuxNoReload", ""
+		return reloadBySignal()
 	}
 	script := `if application "Ghostty" is running then
 	tell application "Ghostty"

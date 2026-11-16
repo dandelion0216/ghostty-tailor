@@ -28,7 +28,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev xvfb
 
       - name: Check formatting
         run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
@@ -49,3 +49,12 @@ jobs:
       - name: Build (Linux)
         if: runner.os == 'Linux'
         run: go build -tags desktop,production,webkit2_41 -o "$RUNNER_TEMP/ghostty-tailor" .
+
+      # Start the app on a virtual display and check it is still running after
+      # 10 seconds (timeout exits with 124), i.e. GTK and WebKitGTK load.
+      - name: Launch (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          code=0
+          xvfb-run -a timeout 10 "$RUNNER_TEMP/ghostty-tailor" || code=$?
+          test "$code" -eq 124
