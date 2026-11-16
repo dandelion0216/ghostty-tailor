@@ -104,4 +104,4 @@ Bug reports, ideas and pull requests are welcome — see [CONTRIBUTING.md](CONTR
 
 [MIT](LICENSE)
 
-The bundled Japanese translations of Ghostty's option documentation are derived from Ghostty (MIT License). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+The bundled Japanese translations of Ghostty's option documentation are derived from Ghostty (MIT License). The app also includes [Wails](https://wails.io) and other Go modules. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for their licenses.

@@ -104,4 +104,4 @@ Ghostty がインストールされた環境で ghostty-tailor を起動しま�
 
 [MIT](LICENSE)
 
-同梱している Ghostty の設定説明文の日本語訳は、Ghostty（MIT License）の説明文をもとにしています。詳しくは [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) をご覧ください。
+同梱している Ghostty の設定説明文の日本語訳は、Ghostty（MIT License）の説明文をもとにしています。また、アプリには [Wails](https://wails.io) をはじめとする Go のライブラリが含まれています。それぞれのライセンスは [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) をご覧ください。
