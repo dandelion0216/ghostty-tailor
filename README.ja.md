@@ -54,6 +54,10 @@ mkdir -p ~/Applications && ln -sf "$(brew --prefix)/opt/ghostty-tailor/ghostty-t
 
 [Ghostty](https://ghostty.org) 1.x が必要です。
 
+### Homebrew（Linux）
+
+[Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux) でも同じコマンドで入ります。GTK 3 と WebKitGTK は依存として自動で入り、`ghostty-tailor` コマンドとしてインストールされます。即時反映には Ghostty 1.2 以降が必要です。
+
 ### ソースからビルド
 
 必要なもの: [Go](https://go.dev)、[Wails v2 CLI](https://wails.io)。Node.js は不要です。
@@ -65,7 +69,7 @@ cd ghostty-tailor
 wails build -clean
 ```
 
-macOS では `build/bin/ghostty-tailor.app` が作られます。Linux では `build/bin/ghostty-tailor` が作られます（GTK と WebKitGTK が必要です。[Wails のインストールガイド](https://wails.io/docs/gettingstarted/installation)を参照）。Linux でのビルドはまだ検証していません。
+macOS では `build/bin/ghostty-tailor.app` が作られます。Linux では `build/bin/ghostty-tailor` が作られます（GTK 3 と WebKitGTK 4.1 が必要で、`wails build -tags webkit2_41` でビルドします。[Wails のインストールガイド](https://wails.io/docs/gettingstarted/installation)も参照）。Linux でのビルドは CI で Ubuntu 上で確認しています。
 
 ## 使い方
 
@@ -85,7 +89,9 @@ Ghostty がインストールされた環境で ghostty-tailor を起動しま�
 - **既定に戻す:** 変更済みの項目には「既定に戻す」ボタンが出ます。押すと設定ファイルからその行を消し、Ghostty の既定値に戻ります。
 - **反映タイミングの表示:** 新しいウィンドウから、または Ghostty の再起動後にしか効かない項目には、その旨のラベルが付きます。
 - **自動バックアップ:** 初回起動時に、設定ファイルを同じ場所の `config.ghostty.bak-tailor` にコピーします。その後も変更のたびに変更前の状態を残し、履歴タブから戻せます（保存先は macOS が `~/Library/Application Support/ghostty-tailor/history/`、Linux が `~/.config/ghostty-tailor/history/`）。
-- **即時反映（macOS）:** 変更のたびに AppleScript で Ghostty に設定の再読み込みを指示します。初回は「ghostty-tailor が Ghostty を制御しようとしています」という確認が macOS から出るので、許可してください。許可しなくても変更は保存され、次に Ghostty が設定を読み込んだときに反映されます。Linux では即時反映に未対応のため、Ghostty 側で手動で再読み込みしてください（既定のショートカット: `Ctrl+Shift+,`）。
+- **即時反映:** 変更のたびに、起動中の Ghostty に設定の再読み込みを指示します。
+  - macOS: AppleScript で指示します。初回は「ghostty-tailor が Ghostty を制御しようとしています」という確認が macOS から出るので、許可してください。許可しなくても変更は保存され、次に Ghostty が設定を読み込んだときに反映されます。
+  - Linux: 自分が起動した Ghostty に `SIGUSR2` を送ります。Ghostty 1.2 以降はこれを「設定の再読み込み」として扱います。それより古い Ghostty では手動で再読み込みしてください（既定のショートカット: `Ctrl+Shift+,`）。
 - そのほかの複数行にわたる設定は、詳細設定タブで表示のみ（編集はまだできません）。
 
 ## 技術構成

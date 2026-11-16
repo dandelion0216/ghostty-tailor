@@ -54,6 +54,10 @@ mkdir -p ~/Applications && ln -sf "$(brew --prefix)/opt/ghostty-tailor/ghostty-t
 
 Requires [Ghostty](https://ghostty.org) 1.x.
 
+### Homebrew (Linux)
+
+The same command works with [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux). GTK 3 and WebKitGTK are installed as dependencies, and `ghostty-tailor` is installed as a command. Live reload needs Ghostty 1.2 or later.
+
 ### From source
 
 Requirements: [Go](https://go.dev) and the [Wails v2 CLI](https://wails.io). Node.js is not needed.
@@ -65,7 +69,7 @@ cd ghostty-tailor
 wails build -clean
 ```
 
-On macOS the app is created at `build/bin/ghostty-tailor.app`. On Linux the binary is `build/bin/ghostty-tailor` (Wails needs GTK and WebKitGTK; see the [Wails installation guide](https://wails.io/docs/gettingstarted/installation)). Linux builds have not been tested yet.
+On macOS the app is created at `build/bin/ghostty-tailor.app`. On Linux the binary is `build/bin/ghostty-tailor` (Wails needs GTK 3 and WebKitGTK 4.1; build with `wails build -tags webkit2_41`, and see the [Wails installation guide](https://wails.io/docs/gettingstarted/installation)). Linux builds are tested on Ubuntu in CI.
 
 ## Usage
 
@@ -85,7 +89,9 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 - **Reset:** an option you have changed shows a reset button that removes its line from the config file, so Ghostty falls back to the default.
 - **Reload badges:** some options only take effect in new windows or after restarting Ghostty; they are labeled as such.
 - **Automatic backup:** on first launch your config file is copied to `config.ghostty.bak-tailor` next to it. After that, the state before each change is kept in the History tab (stored in `~/Library/Application Support/ghostty-tailor/history/` on macOS, `~/.config/ghostty-tailor/history/` on Linux).
-- **Live reload (macOS):** after each change ghostty-tailor asks Ghostty to reload its config via AppleScript. The first time, macOS asks whether ghostty-tailor may control Ghostty — allow it to get live reload. If you deny it, changes are still saved and take effect the next time Ghostty reloads its config. Live reload on Linux is not supported yet; reload manually in Ghostty (default: `Ctrl+Shift+,`).
+- **Live reload:** after each change ghostty-tailor asks the running Ghostty to reload its config.
+  - macOS: via AppleScript. The first time, macOS asks whether ghostty-tailor may control Ghostty — allow it to get live reload. If you deny it, changes are still saved and take effect the next time Ghostty reloads its config.
+  - Linux: by sending `SIGUSR2` to your own Ghostty processes, which Ghostty 1.2 and later treat as "reload config". With older Ghostty, reload manually (default: `Ctrl+Shift+,`).
 - Other multi-line options are shown in the Advanced tab but cannot be edited there yet.
 
 ## Stack
