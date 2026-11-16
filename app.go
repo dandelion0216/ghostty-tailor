@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -132,12 +133,20 @@ func (a *App) apply(edit func()) Result {
 	}
 	before := append([]string(nil), a.cfg.lines...)
 	edit()
+	// Keep the previous state in the history. If saving it fails the change
+	// still goes ahead; only the undo point is lost.
+	var snapshot string
+	if !slices.Equal(before, a.cfg.lines) {
+		snapshot, _ = saveSnapshot(before)
+	}
 	if err := a.cfg.Save(); err != nil {
+		removeSnapshot(snapshot)
 		return Result{Message: msg(a.lang, "saveFailed") + err.Error()}
 	}
 	if out, err := runGhosttyCombined(a.bin, "+validate-config", "--config-file="+a.cfg.Path); err != nil {
 		a.cfg.lines = before
 		_ = a.cfg.Save()
+		removeSnapshot(snapshot)
 		return Result{Message: msg(a.lang, "rejected") + strings.TrimSpace(out), Set: a.cfg.Values()}
 	}
 	reloaded, id, detail := reloadConfig()

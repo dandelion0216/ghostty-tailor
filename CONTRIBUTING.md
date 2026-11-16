@@ -41,6 +41,20 @@ Your real Ghostty config is edited while you test. ghostty-tailor backs it up to
 - Japanese translations of option docs: polite form (です・ます), keep code, values and option names in English, and keep an English term when a Japanese rendering would sound unnatural. Each entry stores a hash of the English source; see `i18n.go`.
 - Run `gofmt`, `go vet ./...` and `go test ./...` before opening a pull request.
 
+## Updating the Japanese doc translations
+
+When a new Ghostty version changes option docs, those options fall back to English until they are translated again. With the new Ghostty installed:
+
+```sh
+go run -tags i18nsync . status            # how many entries are stale, missing or obsolete
+go run -tags i18nsync . export todo.json  # stale and missing entries to translate
+# fill in "ja" for each entry ("previous" is the outdated translation, if any)
+go run -tags i18nsync . merge todo.json   # write them into i18n/docs.ja.json
+go run -tags i18nsync . prune             # drop entries for options that no longer exist
+```
+
+`merge` skips entries left empty and entries whose English changed again after export. Keep one line per paragraph, separated by a blank line, as in the English doc.
+
 ## Releases
 
 Releases are tagged `vX.Y.Z` and installed through the [Homebrew tap](https://github.com/dandelion0216/homebrew-tap), which builds from the tagged source.

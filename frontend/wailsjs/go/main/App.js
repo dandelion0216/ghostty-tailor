@@ -6,8 +6,20 @@ export function ColorPanelOpen() {
   return window['go']['main']['App']['ColorPanelOpen']();
 }
 
+export function ExportConfig() {
+  return window['go']['main']['App']['ExportConfig']();
+}
+
 export function Fonts() {
   return window['go']['main']['App']['Fonts']();
+}
+
+export function History() {
+  return window['go']['main']['App']['History']();
+}
+
+export function ImportConfig(arg1) {
+  return window['go']['main']['App']['ImportConfig'](arg1);
 }
 
 export function Keybinds() {
@@ -18,8 +30,16 @@ export function Load() {
   return window['go']['main']['App']['Load']();
 }
 
+export function PreviewImport() {
+  return window['go']['main']['App']['PreviewImport']();
+}
+
 export function ResetOption(arg1) {
   return window['go']['main']['App']['ResetOption'](arg1);
+}
+
+export function RestoreHistory(arg1) {
+  return window['go']['main']['App']['RestoreHistory'](arg1);
 }
 
 export function SetKeybinds(arg1, arg2) {

@@ -4,13 +4,23 @@ import {main} from '../models';
 
 export function ColorPanelOpen():Promise<boolean>;
 
+export function ExportConfig():Promise<main.Result>;
+
 export function Fonts():Promise<Array<string>>;
+
+export function History():Promise<Array<main.HistoryEntry>>;
+
+export function ImportConfig(arg1:string):Promise<main.Result>;
 
 export function Keybinds():Promise<main.KeybindState>;
 
 export function Load():Promise<main.State>;
 
+export function PreviewImport():Promise<main.ImportPreview>;
+
 export function ResetOption(arg1:string):Promise<main.Result>;
+
+export function RestoreHistory(arg1:string):Promise<main.Result>;
 
 export function SetKeybinds(arg1:Array<main.KeyRow>,arg2:Array<string>):Promise<main.Result>;
 

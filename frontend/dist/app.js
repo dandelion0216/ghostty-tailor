@@ -14,12 +14,14 @@ let keyCat = 'tabs';
 let keyQuery = '';
 let recording = null; // row id, or 'new' while adding a shortcut
 let adding = null;    // { action, param } while the add form is open
+let history = null;   // HistoryEntry[] from the backend, reloaded when the tab opens
+let importing = null; // ImportPreview while the import confirmation is shown
 
 let lang = 'en';
 
 const I18N = {
   en: {
-    'tab.theme': 'Theme', 'tab.color': 'Colors', 'tab.font': 'Font', 'tab.window': 'Window', 'tab.keys': 'Keys', 'tab.advanced': 'Advanced',
+    'tab.theme': 'Theme', 'tab.color': 'Colors', 'tab.font': 'Font', 'tab.window': 'Window', 'tab.keys': 'Keys', 'tab.advanced': 'Advanced', 'tab.history': 'History',
     'kc.tabs': 'Tabs', 'kc.splits': 'Splits', 'kc.window': 'Window', 'kc.clipboard': 'Clipboard', 'kc.font': 'Font size', 'kc.scroll': 'Scrolling', 'kc.search': 'Search', 'kc.selection': 'Selection', 'kc.other': 'Other',
     keysHelp: 'Click a shortcut, then press the new keys. Esc cancels.', pressKeys: 'Press keys… (Esc to cancel)', loadingKeys: 'Loading shortcuts…',
     addShortcut: '+ Add shortcut', resetKeys: 'Reset all shortcuts', searchKeys: 'Search actions or keys', tagChanged: 'Changed', tagAdded: 'Added',
@@ -47,10 +49,16 @@ const I18N = {
     resetPalette: 'Reset palette',
     'pal.0': 'Black', 'pal.1': 'Red', 'pal.2': 'Green', 'pal.3': 'Yellow', 'pal.4': 'Blue', 'pal.5': 'Magenta', 'pal.6': 'Cyan', 'pal.7': 'White',
     'pal.8': 'Bright black', 'pal.9': 'Bright red', 'pal.10': 'Bright green', 'pal.11': 'Bright yellow', 'pal.12': 'Bright blue', 'pal.13': 'Bright magenta', 'pal.14': 'Bright cyan', 'pal.15': 'Bright white',
+    exportConfig: 'Export…', importConfig: 'Import…', transferHelp: 'Export your config to a file, or import one, for example from another Mac.',
+    historyHelp: 'Each change made with ghostty-tailor saves the previous state here (newest {0}). Restoring is also saved, so it can be undone.',
+    loadingHistory: 'Loading history…', noHistory: 'No changes yet.', restore: 'Restore this state', restoreTitle: 'Bring back the config as it was before this change',
+    changedKeys: 'Changed: ', moreKeys: '+{0} more', noKeyChange: 'Comments or order only',
+    importConfirm: 'Import {0}? These options will change:', importNoChange: 'Importing {0} changes no options (comments or order only).', importDo: 'Import',
+    importRemoved: '(removed)',
     backup: 'Backup: ', language: 'Language', sampleCjk: 'CJK: いろはにほへと 日本語 中文 한국어',
   },
   ja: {
-    'tab.theme': 'テーマ', 'tab.color': '色', 'tab.font': 'フォント', 'tab.window': 'ウィンドウ', 'tab.keys': 'キー操作', 'tab.advanced': '詳細設定',
+    'tab.theme': 'テーマ', 'tab.color': '色', 'tab.font': 'フォント', 'tab.window': 'ウィンドウ', 'tab.keys': 'キー操作', 'tab.advanced': '詳細設定', 'tab.history': '履歴',
     'kc.tabs': 'タブ', 'kc.splits': '分割', 'kc.window': 'ウィンドウ', 'kc.clipboard': 'クリップボード', 'kc.font': 'フォントサイズ', 'kc.scroll': 'スクロール', 'kc.search': '検索', 'kc.selection': '選択範囲', 'kc.other': 'その他',
     keysHelp: 'ショートカットをクリックして、新しいキーを押すと変更できます。Esc で取り消します。', pressKeys: 'キーを押してください…（Esc で取消）', loadingKeys: 'ショートカットを読み込み中…',
     addShortcut: '＋ ショートカットを追加', resetKeys: 'すべて既定に戻す', searchKeys: '動作やキーで検索', tagChanged: '変更', tagAdded: '追加',
@@ -78,6 +86,12 @@ const I18N = {
     resetPalette: 'パレットを既定に戻す',
     'pal.0': '黒', 'pal.1': '赤', 'pal.2': '緑', 'pal.3': '黄', 'pal.4': '青', 'pal.5': 'マゼンタ', 'pal.6': 'シアン', 'pal.7': '白',
     'pal.8': '明るい黒', 'pal.9': '明るい赤', 'pal.10': '明るい緑', 'pal.11': '明るい黄', 'pal.12': '明るい青', 'pal.13': '明るいマゼンタ', 'pal.14': '明るいシアン', 'pal.15': '明るい白',
+    exportConfig: '書き出す…', importConfig: '取り込む…', transferHelp: '設定をファイルに書き出したり、別の Mac などで書き出したファイルを取り込んだりできます。',
+    historyHelp: 'ghostty-tailor で変更するたびに、変更前の状態をここに残します（新しいものから {0} 件）。戻す操作も残るので、やり直せます。',
+    loadingHistory: '履歴を読み込み中…', noHistory: 'まだ変更はありません。', restore: 'この状態に戻す', restoreTitle: 'この変更をする前の設定に戻します',
+    changedKeys: '変更: ', moreKeys: 'ほか {0} 件', noKeyChange: 'コメントや並び順のみ',
+    importConfirm: '{0} を取り込みますか？ 次の項目が変わります:', importNoChange: '{0} を取り込んでも、変わる項目はありません（コメントや並び順のみ）。', importDo: '取り込む',
+    importRemoved: '（削除）',
     backup: 'バックアップ: ', language: '言語', sampleCjk: 'いろはにほへと　日本語の表示もここで確認',
   },
 };
@@ -86,7 +100,7 @@ const t = (id, ...args) => (I18N[lang][id] ?? I18N.en[id] ?? id).replace(/\{(\d)
 const summaryOf = (o) => (lang === 'ja' && o.summaryJa) || o.summary;
 const docOf = (o) => (lang === 'ja' && o.docJa) || o.doc;
 
-const TABS = ['theme', 'color', 'font', 'window', 'keys', 'advanced'];
+const TABS = ['theme', 'color', 'font', 'window', 'keys', 'advanced', 'history'];
 
 const CURATED = {
   color: [
@@ -651,6 +665,70 @@ function advancedPane() {
   return el('div', { class: 'adv' }, side, list);
 }
 
+// ---------- history ----------
+
+const HISTORY_LIMIT = 50;
+
+// After an import or restore everything shown may be stale.
+function reloadAll(res) {
+  if (res.set) state.set = res.set;
+  keys = null;
+  history = null;
+  importing = null;
+  toast(res.message || t(res.ok ? 'saved' : 'failed'), !res.ok);
+  render();
+}
+
+async function startImport() {
+  const pr = await api().PreviewImport();
+  if (!pr.path && !pr.error) return; // cancelled
+  if (pr.error) { toast(pr.error, true); return; }
+  importing = pr;
+  render();
+}
+
+function importBox() {
+  const name = importing.path.split(/[\\/]/).pop();
+  const changes = importing.changes || [];
+  const fmt = (v) => (v === '' ? t('importRemoved') : v.replace(/\n/g, ' / '));
+  return el('div', { class: 'importbox' },
+    el('p', {}, t(changes.length ? 'importConfirm' : 'importNoChange', name)),
+    changes.length ? el('ul', { class: 'changes' }, changes.map((c) =>
+      el('li', {}, el('code', {}, c.key), ' ', el('span', { class: 'muted' }, c.from === '' ? t('unset') : fmt(c.from)), ' → ', fmt(c.to)))) : null,
+    el('div', { class: 'row-actions' },
+      el('button', { class: 'btn primary', onclick: async () => reloadAll(await api().ImportConfig(importing.path)) }, t('importDo')),
+      el('button', { class: 'btn', onclick: () => { importing = null; render(); } }, t('cancel'))));
+}
+
+function historyPane() {
+  if (!history) {
+    api().History().then((h) => { history = h || []; render(true); });
+    return el('p', { class: 'muted pad' }, t('loadingHistory'));
+  }
+  const when = (iso) => new Date(iso).toLocaleString(lang === 'ja' ? 'ja-JP' : 'en-US',
+    { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const keyList = (ks) => {
+    if (!ks.length) return el('span', { class: 'muted' }, t('noKeyChange'));
+    const shown = ks.slice(0, 6).map((k) => el('code', {}, k));
+    return el('span', {}, t('changedKeys'), shown.flatMap((c, i) => (i ? [', ', c] : [c])), ks.length > 6 ? ' ' + t('moreKeys', ks.length - 6) : '');
+  };
+  return el('div', { class: 'scroll history' },
+    el('section', { class: 'group' },
+      el('p', { class: 'muted' }, t('transferHelp')),
+      el('div', { class: 'row-actions' },
+        el('button', { class: 'btn', onclick: async () => { const res = await api().ExportConfig(); if (res.message) toast(res.message, !res.ok); } }, t('exportConfig')),
+        el('button', { class: 'btn', onclick: startImport }, t('importConfig'))),
+      importing ? importBox() : null),
+    el('section', { class: 'group' },
+      el('h3', {}, t('tab.history')),
+      el('p', { class: 'muted' }, t('historyHelp', HISTORY_LIMIT)),
+      history.length ? el('ul', { class: 'histlist' }, history.map((h) =>
+        el('li', {},
+          el('div', {}, el('div', { class: 'when' }, when(h.time)), el('div', { class: 'keys' }, keyList(h.keys || []))),
+          el('button', { class: 'btn', title: t('restoreTitle'), onclick: async () => reloadAll(await api().RestoreHistory(h.id)) }, t('restore')))))
+        : el('p', { class: 'muted' }, t('noHistory'))));
+}
+
 // ---------- shell ----------
 
 function render(keepScroll = false) {
@@ -659,7 +737,7 @@ function render(keepScroll = false) {
   const scroll = keepScroll ? (pane.querySelector('.adv section') || pane).scrollTop : 0;
   document.documentElement.lang = lang;
   document.getElementById('tabs').replaceChildren(...TABS.map((id) =>
-    el('button', { class: id === tab ? 'on' : '', onclick: () => { tab = id; render(); } }, t('tab.' + id))));
+    el('button', { class: id === tab ? 'on' : '', onclick: () => { tab = id; if (id === 'history') history = null; render(); } }, t('tab.' + id))));
   document.getElementById('path').textContent = state.configPath + (state.backupPath ? `　${t('backup')}${state.backupPath}` : '');
   langPicker();
   let view;
@@ -668,6 +746,7 @@ function render(keepScroll = false) {
   else if (tab === 'font') view = fontPane();
   else if (tab === 'keys') view = keysPane();
   else if (tab === 'advanced') view = advancedPane();
+  else if (tab === 'history') view = historyPane();
   else if (tab === 'color') view = curatedPane(CURATED.color, palettePane());
   else view = curatedPane(CURATED[tab]);
   pane.replaceChildren(view);

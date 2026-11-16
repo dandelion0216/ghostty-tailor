@@ -86,6 +86,11 @@ var messages = map[string]map[string]string{
 		"notRunning":     "Ghostty is not running. Saved only",
 		"noTerminal":     "Ghostty has no open window. Saved only",
 		"settingsFailed": "Failed to save the language setting: ",
+		"historyMissing": "This history entry no longer exists",
+		"exportTitle":    "Export Ghostty config",
+		"exported":       "Exported to ",
+		"importTitle":    "Import Ghostty config",
+		"importInvalid":  "Ghostty cannot use this file: ",
 	},
 	"ja": {
 		"notFound":       "ghostty コマンドが見つかりません",
@@ -99,6 +104,11 @@ var messages = map[string]map[string]string{
 		"notRunning":     "Ghostty が起動していないため、保存のみ行いました",
 		"noTerminal":     "Ghostty のウィンドウがないため、保存のみ行いました",
 		"settingsFailed": "言語設定の保存に失敗しました: ",
+		"historyMissing": "この履歴はもう残っていません",
+		"exportTitle":    "Ghostty の設定を書き出す",
+		"exported":       "書き出しました: ",
+		"importTitle":    "Ghostty の設定を取り込む",
+		"importInvalid":  "Ghostty がこのファイルを読み込めません: ",
 	},
 }
 
