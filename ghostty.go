@@ -91,6 +91,9 @@ func parseDocs(out string) []Option {
 			}
 			full := strings.TrimSpace(strings.Join(doc, "\n"))
 			kind, choices := detectKind(k, v, full)
+			if isRepeatable(k, full) {
+				kind, choices = "repeat", nil
+			}
 			idx[k] = len(opts)
 			opts = append(opts, Option{
 				Key:      k,
@@ -111,6 +114,26 @@ func parseDocs(out string) []Option {
 func firstParagraph(doc string) string {
 	p, _, _ := strings.Cut(doc, "\n\n")
 	return strings.Join(strings.Fields(p), " ")
+}
+
+// Options that can be written more than once, where each line adds a value.
+// Options with several default lines (keybind, palette, ...) are found by
+// parseDocs; these have a single empty default, so they are listed here, and
+// repeatRe catches ones added in newer Ghostty versions from their docs.
+var repeatableKeys = map[string]bool{
+	"font-family": true, "font-family-bold": true, "font-family-italic": true, "font-family-bold-italic": true,
+	"font-variation": true, "font-variation-bold": true, "font-variation-italic": true, "font-variation-bold-italic": true,
+	"font-feature": true, "font-codepoint-map": true, "clipboard-codepoint-map": true,
+	"env": true, "input": true, "key-remap": true, "config-file": true, "custom-shader": true, "gtk-custom-css": true,
+}
+
+// Matches "This configuration can be repeated ...", "can be repeated multiple
+// times", "A repeatable configuration", "repeat this multiple times", but not
+// "Units can be repeated" in duration docs.
+var repeatRe = regexp.MustCompile(`(?i)(this (configuration )?can be repeated|can be repeated multiple times|a repeatable configuration|repeat this multiple times)`)
+
+func isRepeatable(key, doc string) bool {
+	return repeatableKeys[key] || repeatRe.MatchString(strings.Join(strings.Fields(doc), " "))
 }
 
 // Options whose valid values are written in prose rather than as a bullet list.

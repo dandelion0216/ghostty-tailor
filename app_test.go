@@ -128,3 +128,13 @@ func TestSetRepeated(t *testing.T) {
 		t.Errorf("config = %q", got)
 	}
 }
+
+func TestSetOptionKeepsOtherValuesOfRepeatableOption(t *testing.T) {
+	a := newTestApp(t, "font-family = JetBrains Mono\nfont-family = Noto Sans CJK JP\n", 0, reloadOK)
+	if res := a.SetOption("font-family", "Fira Code"); !res.OK {
+		t.Fatalf("result = %+v", res)
+	}
+	if got := readFile(t, a.cfg.Path); got != "font-family = Fira Code\nfont-family = Noto Sans CJK JP\n" {
+		t.Errorf("config = %q", got)
+	}
+}

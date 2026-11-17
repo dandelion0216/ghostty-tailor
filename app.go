@@ -17,6 +17,7 @@ type App struct {
 
 	defaultKeys [][2]string // ghostty +list-keybinds --default, cached
 	actions     []string
+	repeatable  map[string]bool // options of kind "repeat", from the last Load
 }
 
 type State struct {
@@ -71,6 +72,12 @@ func (a *App) Load() State {
 	}
 	st.Options = parseDocs(docs)
 	applyDocTranslations(st.Options)
+	a.repeatable = map[string]bool{}
+	for _, o := range st.Options {
+		if o.Kind == "repeat" {
+			a.repeatable[o.Key] = true
+		}
+	}
 	if err := a.cfg.Load(); err != nil {
 		st.Error = msg(a.lang, "readConfig") + err.Error()
 		return st
@@ -95,11 +102,16 @@ func (a *App) Fonts() []string {
 	return parseFonts(out)
 }
 
+// SetOption sets a single value. For a repeatable option only the first value
+// changes and the rest are kept; use SetRepeated to edit the whole list.
 func (a *App) SetOption(key, value string) Result {
 	return a.apply(func() {
-		if strings.TrimSpace(value) == "" {
+		switch {
+		case strings.TrimSpace(value) == "":
 			a.cfg.Unset(key)
-		} else {
+		case a.repeatable[key] || repeatableKeys[key]:
+			a.cfg.SetFirst(key, value)
+		default:
 			a.cfg.Set(key, value)
 		}
 	})

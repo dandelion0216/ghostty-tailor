@@ -50,6 +50,12 @@ input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); }
 textarea { width: 260px; height: 64px; font: 11px "SF Mono", Menlo, monospace; }
 button.reset { font-size: 11px; border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
 button.reset:hover { color: var(--fg); }
+.list { display: flex; flex-direction: column; gap: 4px; width: 300px; }
+.list .li { display: flex; align-items: center; gap: 4px; }
+.list input { flex: 1; min-width: 0; }
+button.mini { width: 24px; height: 24px; padding: 0; border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 6px; cursor: pointer; }
+button.mini:hover:not(:disabled) { color: var(--fg); }
+button.mini:disabled { opacity: .35; cursor: default; }
 h3 { font-size: 13px; letter-spacing: .06em; color: var(--muted); margin: 20px 0 8px; }
 h3:first-child { margin-top: 0; }
 .note { background: var(--card); border: 1px dashed var(--line); padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }

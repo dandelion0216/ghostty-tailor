@@ -34,7 +34,8 @@ const I18N = {
     'cat.mouse': 'Mouse & clipboard', 'cat.keys': 'Keys', 'cat.shell': 'Shell & startup', 'cat.macos': 'macOS',
     'cat.linux': 'Linux (GTK)', 'cat.other': 'Other',
     saved: 'Saved', failed: 'Failed',
-    repeatReadonly: 'Multi-line options cannot be edited yet',
+    editInTab: 'Edit this in the {0} tab', addValue: 'Add a value', emptyValue: '(empty: clears earlier values)',
+    moveUp: 'Move up', moveDown: 'Move down', fontFallbacks: 'Fallback fonts: {0}',
     followTheme: 'From theme', unset: '(not set)',
     'reload.newwindow': 'New windows only', 'reload.restart': 'Restart required',
     moreDoc: 'Details', resetTitle: 'Remove this line from the config file and use the default', reset: 'Reset',
@@ -71,7 +72,8 @@ const I18N = {
     'cat.mouse': 'マウス・クリップボード', 'cat.keys': 'キー操作', 'cat.shell': 'シェル・起動', 'cat.macos': 'macOS',
     'cat.linux': 'Linux (GTK)', 'cat.other': 'その他',
     saved: '保存しました', failed: '失敗しました',
-    repeatReadonly: '複数行の設定はまだ編集できません',
+    editInTab: '「{0}」タブで編集できます', addValue: '値を追加', emptyValue: '（空: それまでの値を取り消す）',
+    moveUp: '上へ', moveDown: '下へ', fontFallbacks: '代替フォント: {0}',
     followTheme: 'テーマに従う', unset: '(未設定)',
     'reload.newwindow': '新しいウィンドウから', 'reload.restart': '再起動が必要',
     moreDoc: '詳しい説明', resetTitle: 'この行を設定ファイルから消して既定値に戻す', reset: '既定に戻す',
@@ -206,9 +208,7 @@ function toHex(v) {
 function control(o) {
   const val = current(o);
   const range = SLIDERS[o.key];
-  if (o.kind === 'repeat') {
-    return el('textarea', { readonly: true, title: t('repeatReadonly') }, val);
-  }
+  if (o.kind === 'repeat') return listControl(o, val);
   if (o.kind === 'bool') {
     return el('input', { type: 'checkbox', checked: val === 'true', onchange: (e) => setOpt(o.key, e.target.checked) });
   }
@@ -233,6 +233,27 @@ function control(o) {
     return el('div', { class: 'ctl' }, slider, num);
   }
   return el('input', { type: 'text', value: val, placeholder: o.default || t('unset'), onchange: (e) => setOpt(o.key, e.target.value) });
+}
+
+// Options that can be written more than once: one row per line, in file order.
+// palette and keybind have their own editors in other tabs.
+const OWN_EDITOR = { palette: 'tab.color', keybind: 'tab.keys' };
+
+function listControl(o, val) {
+  if (OWN_EDITOR[o.key]) return el('textarea', { readonly: true, title: t('editInTab', t(OWN_EDITOR[o.key])) }, val);
+  const values = state.set[o.key] !== undefined ? state.set[o.key].split('\n') : [];
+  const save = (list) => apply(api().SetRepeated(o.key, list), true);
+  const move = (i, j) => { const l = [...values]; [l[i], l[j]] = [l[j], l[i]]; save(l); };
+  const rows = values.map((v, i) => el('div', { class: 'li' },
+    el('input', { type: 'text', value: v, placeholder: t('emptyValue'),
+      // Clearing a row removes it; the × button does the same.
+      onchange: (e) => save(e.target.value.trim() ? values.map((x, j) => (j === i ? e.target.value : x)) : values.filter((_, j) => j !== i)) }),
+    el('button', { class: 'mini', title: t('moveUp'), disabled: i === 0, onclick: () => move(i, i - 1) }, '↑'),
+    el('button', { class: 'mini', title: t('moveDown'), disabled: i === values.length - 1, onclick: () => move(i, i + 1) }, '↓'),
+    el('button', { class: 'mini', title: t('remove'), onclick: () => save(values.filter((_, j) => j !== i)) }, '×')));
+  const add = el('input', { type: 'text', placeholder: t('addValue'),
+    onchange: (e) => { if (e.target.value.trim()) save([...values, e.target.value]); } });
+  return el('div', { class: 'list' }, rows, add);
 }
 
 const HAS_RELOAD_LABEL = { newwindow: true, restart: true };
@@ -376,7 +397,7 @@ function fontPane() {
   const fam = state.set['font-family'] || '';
   const size = parseFloat(current(byKey['font-size'])) || 13;
   const sample = 'The quick brown fox jumps over the lazy dog\n0O 1lI |  => != === -> <= >= ~~>\n' + t('sampleCjk');
-  const cur = fam.split('\n')[0];
+  const [cur, ...fallbacks] = fam.split('\n');
   const stack = (f) => `${f ? `"${f}", ` : ''}"SF Mono", Menlo, monospace`;
   const sampleBox = el('div', { class: 'sample', style: `font-family:${stack(cur)};font-size:${size}px` }, sample);
   const previewLabel = el('div', { class: 'muted small' }, t('fontPreview'));
@@ -397,6 +418,7 @@ function fontPane() {
       el('div', { class: 'row' },
         el('div', { class: 'info' }, el('code', { class: 'key' }, 'font-family'), el('div', { class: 'sum' }, byKey['font-family'] && summaryOf(byKey['font-family']))),
         el('div', { class: 'ctl' },
+          fallbacks.length ? el('span', { class: 'muted small' }, t('fontFallbacks', fallbacks.join(', '))) : null,
           fonts ? el('span', { class: 'muted small' }, t('fontHint')) : el('span', { class: 'muted' }, t('loadingFonts')),
           fam ? el('button', { class: 'reset', onclick: () => resetOpt('font-family') }, t('reset')) : null)),
       fontList),
