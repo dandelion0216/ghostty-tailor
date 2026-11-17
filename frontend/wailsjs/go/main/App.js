@@ -42,6 +42,10 @@ export function RestoreHistory(arg1) {
   return window['go']['main']['App']['RestoreHistory'](arg1);
 }
 
+export function SetKeyRecording(arg1) {
+  return window['go']['main']['App']['SetKeyRecording'](arg1);
+}
+
 export function SetKeybinds(arg1, arg2) {
   return window['go']['main']['App']['SetKeybinds'](arg1, arg2);
 }

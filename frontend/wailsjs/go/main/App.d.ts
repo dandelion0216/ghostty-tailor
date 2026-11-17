@@ -22,6 +22,8 @@ export function ResetOption(arg1:string):Promise<main.Result>;
 
 export function RestoreHistory(arg1:string):Promise<main.Result>;
 
+export function SetKeyRecording(arg1:boolean):Promise<void>;
+
 export function SetKeybinds(arg1:Array<main.KeyRow>,arg2:Array<string>):Promise<main.Result>;
 
 export function SetLang(arg1:string):Promise<main.Result>;
