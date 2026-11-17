@@ -21,20 +21,22 @@ type App struct {
 }
 
 type State struct {
-	Version    string            `json:"version"`
-	ConfigPath string            `json:"configPath"`
-	BackupPath string            `json:"backupPath"`
-	Options    []Option          `json:"options"`
-	Set        map[string]string `json:"set"`
-	Lang       string            `json:"lang"`
-	Error      string            `json:"error"`
+	Version    string                     `json:"version"`
+	ConfigPath string                     `json:"configPath"`
+	BackupPath string                     `json:"backupPath"`
+	Options    []Option                   `json:"options"`
+	Set        map[string]string          `json:"set"`
+	Included   map[string][]IncludedValue `json:"included"` // set in files loaded with config-file
+	Lang       string                     `json:"lang"`
+	Error      string                     `json:"error"`
 }
 
 type Result struct {
-	OK       bool              `json:"ok"`
-	Message  string            `json:"message"`
-	Reloaded bool              `json:"reloaded"`
-	Set      map[string]string `json:"set"`
+	OK       bool                       `json:"ok"`
+	Message  string                     `json:"message"`
+	Reloaded bool                       `json:"reloaded"`
+	Set      map[string]string          `json:"set"`
+	Included map[string][]IncludedValue `json:"included"`
 }
 
 // reloadConfig is replaced in tests so they do not touch a running Ghostty.
@@ -83,6 +85,7 @@ func (a *App) Load() State {
 		return st
 	}
 	st.Set = a.cfg.Values()
+	st.Included = includedValues(a.cfg.Path, a.cfg.lines)
 	if b, err := a.cfg.Backup(); err == nil {
 		a.backup = b
 	}
@@ -159,11 +162,11 @@ func (a *App) apply(edit func()) Result {
 		a.cfg.lines = before
 		_ = a.cfg.Save()
 		removeSnapshot(snapshot)
-		return Result{Message: msg(a.lang, "rejected") + strings.TrimSpace(out), Set: a.cfg.Values()}
+		return Result{Message: msg(a.lang, "rejected") + strings.TrimSpace(out), Set: a.cfg.Values(), Included: includedValues(a.cfg.Path, a.cfg.lines)}
 	}
 	reloaded, id, detail := reloadConfig()
 	if reloaded {
 		id = "reloaded"
 	}
-	return Result{OK: true, Message: msg(a.lang, id) + detail, Reloaded: reloaded, Set: a.cfg.Values()}
+	return Result{OK: true, Message: msg(a.lang, id) + detail, Reloaded: reloaded, Set: a.cfg.Values(), Included: includedValues(a.cfg.Path, a.cfg.lines)}
 }

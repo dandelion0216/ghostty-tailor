@@ -65,6 +65,8 @@ button.mini:hover:not(:disabled) { color: var(--fg); }
 button.mini:disabled { opacity: .35; cursor: default; }
 h3 { font-size: 13px; letter-spacing: .06em; color: var(--muted); margin: 20px 0 8px; }
 h3:first-child { margin-top: 0; }
+.inc { margin-top: 6px; padding: 4px 8px; border: 1px dashed var(--warn); border-radius: 6px; font-size: 12px; }
+.toolbar ~ .inc { margin: 0 0 12px; }
 .note { background: var(--card); border: 1px dashed var(--line); padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
 
 /* themes */

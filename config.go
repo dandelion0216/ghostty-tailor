@@ -55,6 +55,15 @@ func (c *ConfigFile) Load() error {
 }
 
 func parseLine(line string) (string, string, bool) {
+	k, v, ok := parseRawLine(line)
+	if isQuoted(v) {
+		v = v[1 : len(v)-1]
+	}
+	return k, v, ok
+}
+
+// parseRawLine is parseLine without removing the quotes around the value.
+func parseRawLine(line string) (string, string, bool) {
 	t := strings.TrimSpace(line)
 	if t == "" || strings.HasPrefix(t, "#") {
 		return "", "", false
@@ -63,11 +72,11 @@ func parseLine(line string) (string, string, bool) {
 	if !ok {
 		return "", "", false
 	}
-	v = strings.TrimSpace(v)
-	if len(v) >= 2 && strings.HasPrefix(v, `"`) && strings.HasSuffix(v, `"`) {
-		v = v[1 : len(v)-1]
-	}
-	return strings.TrimSpace(k), v, true
+	return strings.TrimSpace(k), strings.TrimSpace(v), true
+}
+
+func isQuoted(v string) bool {
+	return len(v) >= 2 && strings.HasPrefix(v, `"`) && strings.HasSuffix(v, `"`)
 }
 
 // Values returns the keys set in the file. Repeated keys are joined with newlines.
