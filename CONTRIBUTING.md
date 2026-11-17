@@ -65,6 +65,21 @@ With the new Ghostty installed:
 4. Compare the keybind actions (`ghostty +list-actions`) with `ACTIONS` in `frontend/dist/app.js`.
 5. Update the tested version under "Supported Ghostty versions" in both READMEs.
 
+## Compatibility
+
+From 1.0 on, the files and names below are what users rely on, so they stay as they are. A change that cannot keep them is a breaking change and needs a major version.
+
+| What | Format | Kept from 1.0 on |
+|---|---|---|
+| Editing the Ghostty config | Only the lines for the changed option are rewritten, in place; other lines and comments are left as they are. A new option is added at the end as `key = value`. | No reordering or reformatting of the user's file. |
+| First backup | `<config file>.bak-tailor` next to the config, made once on first launch and never overwritten | Name and "never overwritten". |
+| History | `<user config dir>/ghostty-tailor/history/`, one file per change named `YYYYMMDD-HHMMSS.mmm.ghostty` (local time), holding the whole config file as it was before the change; the newest 50 are kept | Location, file names and contents. History left by an older version stays readable. The number kept may change. |
+| `settings.json` | `<user config dir>/ghostty-tailor/settings.json`, a JSON object; today only `lang` (`en` or `ja`) | Fields are only added, never renamed or removed. Unknown fields are ignored and missing ones fall back to defaults. |
+| Export | A plain copy of the Ghostty config file | Stays a plain Ghostty config, never a format of our own. |
+| Command and install | `ghostty-tailor`, `brew install dandelion0216/tap/ghostty-tailor` | Unchanged. |
+
+`<user config dir>` is `~/Library/Application Support` on macOS and `$XDG_CONFIG_HOME` (usually `~/.config`) on Linux.
+
 ## Releases
 
 Releases are tagged `vX.Y.Z` and installed through the [Homebrew tap](https://github.com/dandelion0216/homebrew-tap), which builds from the tagged source.
