@@ -85,6 +85,7 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 | Advanced | Every option, grouped by category on the left, with a search box |
 | History | Export your config to a file or import one (with a list of what will change), and restore any of the last 50 states saved before each change |
 
+- **Light / dark:** follows your system appearance. On Linux the desktop's dark style is read when ghostty-tailor starts.
 - **Language:** switch between English and 日本語 with the menu at the top right. The first launch follows your OS language, and your choice is remembered. Option docs that changed in a newer Ghostty than the bundled translations are shown in English.
 - **Reset:** an option you have changed shows a reset button that removes its line from the config file, so Ghostty falls back to the default.
 - **Reload badges:** some options only take effect in new windows or after restarting Ghostty; they are labeled as such.

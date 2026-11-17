@@ -407,8 +407,10 @@ function fontPane() {
     sampleBox.style.fontFamily = stack(f);
     previewLabel.textContent = f === cur ? t('fontPreview') : t('fontPreviewing', f || t('defaultFont'));
   };
+  // The font in use stays in the list even if it is not one of the listed (monospace) fonts.
+  const listed = fonts && (cur && !fonts.includes(cur) ? [cur, ...fonts] : fonts);
   const fontList = fonts && el('div', { class: 'fontlist', onmouseleave: () => show(cur) },
-    ['', ...fonts].map((f) => el('button', { class: 'fontitem' + (f === cur ? ' on' : ''), style: `font-family:${stack(f)}`,
+    ['', ...listed].map((f) => el('button', { class: 'fontitem' + (f === cur ? ' on' : ''), style: `font-family:${stack(f)}`,
       onmouseenter: () => show(f), onfocus: () => show(f),
       onclick: () => (f === cur ? null : f ? setOpt('font-family', f, true) : resetOpt('font-family')) },
     el('span', { class: 'fname' }, f || t('defaultFont')), el('span', { class: 'fsample' }, 'AaBb 0O 1lI => 日本語'))));

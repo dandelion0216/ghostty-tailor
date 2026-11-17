@@ -99,7 +99,7 @@ func (a *App) Fonts() []string {
 	if err != nil {
 		return nil
 	}
-	return parseFonts(out)
+	return keepMono(parseFonts(out), monoFamilies())
 }
 
 // SetOption sets a single value. For a repeatable option only the first value

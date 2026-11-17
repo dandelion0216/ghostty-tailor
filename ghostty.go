@@ -314,6 +314,56 @@ func parseFonts(out string) []string {
 	return fonts
 }
 
+// On macOS `ghostty +list-fonts` lists monospace families only, but on Linux
+// (fontconfig) it lists every family. There fontconfig is asked which
+// families are monospace (spacing=mono) or dual-width (spacing=dual, used by
+// some coding fonts with wide glyphs) and cover Latin text (lang=en, which
+// leaves out emoji and symbol fonts that are also marked monospace); the rest
+// are dropped.
+
+// monoFamilies returns nil off Linux or when fontconfig is not available, and
+// then the list is left as is.
+func monoFamilies() map[string]bool {
+	if runtime.GOOS != "linux" {
+		return nil
+	}
+	set := map[string]bool{}
+	for _, spacing := range []string{"mono", "dual"} {
+		out, err := exec.Command("fc-list", "-f", "%{family}\n", ":spacing="+spacing+":lang=en").Output()
+		if err != nil {
+			return nil
+		}
+		addFamilies(set, string(out))
+	}
+	return set
+}
+
+// addFamilies adds every name of each fc-list line; a family can have several
+// comma-separated names (e.g. localized ones).
+func addFamilies(set map[string]bool, out string) {
+	for _, line := range strings.Split(out, "\n") {
+		for _, name := range strings.Split(line, ",") {
+			if name = strings.TrimSpace(name); name != "" {
+				set[name] = true
+			}
+		}
+	}
+}
+
+// keepMono drops the families that are not in mono; a nil mono keeps them all.
+func keepMono(fonts []string, mono map[string]bool) []string {
+	if mono == nil {
+		return fonts
+	}
+	var out []string
+	for _, f := range fonts {
+		if mono[f] {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
 // reloadGhostty asks the running Ghostty to reload its config. It returns a
 // message id (see messages) and extra detail when the reload did not happen.
 func reloadGhostty() (bool, string, string) {
