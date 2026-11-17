@@ -40,6 +40,12 @@ Ghostty is configured with a plain text file. It is powerful, but it is hard to 
 
 ## Install
 
+### Supported Ghostty versions
+
+Ghostty 1.2 or later on Linux and 1.3 or later on macOS. Tested with Ghostty 1.4.0 on macOS and 1.3.0 on Ubuntu 26.04.
+
+Live reload is what needs these versions: on macOS it uses AppleScript (added in Ghostty 1.3), on Linux `SIGUSR2` (1.2). With an older Ghostty, changes are still saved and take effect the next time Ghostty reloads its config. On macOS live reload is also off if `macos-applescript = false` is set.
+
 ### Homebrew (macOS)
 
 ```sh
@@ -92,7 +98,7 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 - **Reload badges:** some options only take effect in new windows or after restarting Ghostty; they are labeled as such.
 - **Automatic backup:** on first launch your config file is copied to `config.ghostty.bak-tailor` next to it. After that, the state before each change is kept in the History tab (stored in `~/Library/Application Support/ghostty-tailor/history/` on macOS, `~/.config/ghostty-tailor/history/` on Linux).
 - **Live reload:** after each change ghostty-tailor asks the running Ghostty to reload its config.
-  - macOS: via AppleScript. The first time, macOS asks whether ghostty-tailor may control Ghostty — allow it to get live reload. If you deny it, changes are still saved and take effect the next time Ghostty reloads its config.
+  - macOS: via AppleScript (Ghostty 1.3 and later). The first time, macOS asks whether ghostty-tailor may control Ghostty — allow it to get live reload. If you deny it, changes are still saved and take effect the next time Ghostty reloads its config.
   - Linux: by sending `SIGUSR2` to your own Ghostty processes, which Ghostty 1.2 and later treat as "reload config". With older Ghostty, reload manually (default: `Ctrl+Shift+,`).
 - **Options that can be repeated** (`font-family`, `font-feature`, `config-file`, `env`, ...) are edited as a list in the Advanced tab: add, remove and reorder values. Picking a font in the Font tab only changes the first `font-family`, so fallback fonts are kept.
 

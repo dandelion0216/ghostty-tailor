@@ -40,6 +40,12 @@ Ghostty の設定はテキストファイルで行います。柔軟な反面、
 
 ## インストール
 
+### 対応する Ghostty の版
+
+Linux は Ghostty 1.2 以降、macOS は 1.3 以降に対応しています。macOS の Ghostty 1.4.0 と、Ubuntu 26.04 の Ghostty 1.3.0 で確認しています。
+
+版の条件は即時反映のためです。macOS では AppleScript（Ghostty 1.3 で追加）を、Linux では `SIGUSR2`（1.2 以降）を使います。古い Ghostty でも変更は保存され、次に Ghostty が設定を読み込んだときに反映されます。macOS で `macos-applescript = false` を設定している場合も、即時反映は効きません。
+
 ### Homebrew（macOS）
 
 ```sh
@@ -92,7 +98,7 @@ Ghostty がインストールされた環境で ghostty-tailor を起動しま�
 - **反映タイミングの表示:** 新しいウィンドウから、または Ghostty の再起動後にしか効かない項目には、その旨のラベルが付きます。
 - **自動バックアップ:** 初回起動時に、設定ファイルを同じ場所の `config.ghostty.bak-tailor` にコピーします。その後も変更のたびに変更前の状態を残し、履歴タブから戻せます（保存先は macOS が `~/Library/Application Support/ghostty-tailor/history/`、Linux が `~/.config/ghostty-tailor/history/`）。
 - **即時反映:** 変更のたびに、起動中の Ghostty に設定の再読み込みを指示します。
-  - macOS: AppleScript で指示します。初回は「ghostty-tailor が Ghostty を制御しようとしています」という確認が macOS から出るので、許可してください。許可しなくても変更は保存され、次に Ghostty が設定を読み込んだときに反映されます。
+  - macOS: AppleScript で指示します（Ghostty 1.3 以降）。初回は「ghostty-tailor が Ghostty を制御しようとしています」という確認が macOS から出るので、許可してください。許可しなくても変更は保存され、次に Ghostty が設定を読み込んだときに反映されます。
   - Linux: 自分が起動した Ghostty に `SIGUSR2` を送ります。Ghostty 1.2 以降はこれを「設定の再読み込み」として扱います。それより古い Ghostty では手動で再読み込みしてください（既定のショートカット: `Ctrl+Shift+,`）。
 - **繰り返し指定できる設定**（`font-family`・`font-feature`・`config-file`・`env` など）は、詳細設定タブで一覧として編集できます（追加・削除・並べ替え）。フォントタブでフォントを選んだときは 1 つ目の `font-family` だけを変えるので、代替フォントの行は残ります。
 
