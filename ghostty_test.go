@@ -99,6 +99,9 @@ func TestParseFonts(t *testing.T) {
 }
 
 func TestLoadThemes(t *testing.T) {
+	orig := systemThemeDirs
+	systemThemeDirs = nil
+	t.Cleanup(func() { systemThemeDirs = orig })
 	root := t.TempDir()
 	home := filepath.Join(root, "home")
 	t.Setenv("HOME", home)
