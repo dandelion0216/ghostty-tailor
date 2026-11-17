@@ -11,7 +11,7 @@ ghostty-tailor is an unofficial project and is not affiliated with Ghostty. Plea
 
 ## Development setup
 
-Requirements: [Go](https://go.dev), the [Wails v2 CLI](https://wails.io) and [Ghostty](https://ghostty.org) 1.x. Node.js is not needed — the frontend is plain HTML / CSS / JS in `frontend/dist/`.
+Requirements: [Go](https://go.dev), the [Wails v2 CLI](https://wails.io) and [Ghostty](https://ghostty.org) 1.3 or later (1.2 or later on Linux). Node.js is not needed — the frontend is plain HTML / CSS / JS in `frontend/dist/`.
 
 ```sh
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
@@ -54,6 +54,16 @@ go run -tags i18nsync . prune             # drop entries for options that no lon
 ```
 
 `merge` skips entries left empty and entries whose English changed again after export. Keep one line per paragraph, separated by a blank line, as in the English doc.
+
+## When Ghostty releases a new version
+
+With the new Ghostty installed:
+
+1. Run the app against it and go through each tab; check that changes are saved and reloaded.
+2. `go run -tags i18nsync . status`, then update the translations as above.
+3. Compare the options with the previous version (`ghostty +show-config --default --docs`): new options may need a category, a curated tab or a known type, and removed ones may still be used in a curated tab.
+4. Compare the keybind actions (`ghostty +list-actions`) with `ACTIONS` in `frontend/dist/app.js`.
+5. Update the tested version under "Supported Ghostty versions" in both READMEs.
 
 ## Releases
 
