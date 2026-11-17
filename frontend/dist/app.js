@@ -13,6 +13,12 @@ let keys = null;      // KeybindState from the backend
 let keyCat = 'tabs';
 let keyQuery = '';
 let recording = null; // row id, or 'new' while adding a shortcut
+
+// On macOS, ⌘ shortcuts such as ⌘W reach the page only while Go knows we are recording.
+function setRecording(id) {
+  recording = id;
+  try { api().SetKeyRecording(!!id).catch(() => {}); } catch (_) { /* not in the app */ }
+}
 let adding = null;    // { action, param } while the add form is open
 let history = null;   // HistoryEntry[] from the backend, reloaded when the tab opens
 let importing = null; // ImportPreview while the import confirmation is shown
@@ -581,7 +587,7 @@ async function saveKeys(rows) {
 
 function finishRecording(trig) {
   const id = recording;
-  recording = null;
+  setRecording(null);
   if (!trig) { render(true); return; }
   const rows = keys.rows.map((r) => ({ ...r }));
   let target;
@@ -626,7 +632,7 @@ function keyRow(r) {
       r.origin !== 'default' ? el('span', { class: 'tag' }, t(r.origin === 'added' ? 'tagAdded' : 'tagChanged')) : null,
       el('small', {}, r.action)),
     el('button', { class: 'kb-key' + (rec ? ' rec' : ''), title: t('keysHelp'),
-      onclick: () => { recording = r.id; render(true); } }, rec ? t('pressKeys') : formatTrigger(r.trigger)));
+      onclick: () => { setRecording(r.id); render(true); } }, rec ? t('pressKeys') : formatTrigger(r.trigger)));
 }
 
 function addForm() {
@@ -639,9 +645,9 @@ function addForm() {
       oninput: (e) => { adding.param = e.target.value.trim(); } }),
     el('button', { class: 'kb-key' + (rec ? ' rec' : ''), onclick: () => {
       if (!(keys.actions || []).includes(adding.action)) { toast(t('unknownAction'), true); return; }
-      recording = 'new'; render(true);
+      setRecording('new'); render(true);
     } }, rec ? t('pressKeys') : t('recordKey')),
-    el('button', { class: 'reset', onclick: () => { adding = null; recording = null; render(true); } }, t('cancel')));
+    el('button', { class: 'reset', onclick: () => { adding = null; setRecording(null); render(true); } }, t('cancel')));
 }
 
 function keysPane() {
