@@ -15,6 +15,9 @@ type KeyRow struct {
 	DefaultTrigger string `json:"defaultTrigger"` // empty for added rows
 	Enabled        bool   `json:"enabled"`
 	Origin         string `json:"origin"` // default, changed, added
+	// Replaced marks a default that is off only because another binding took
+	// its key. It gets no unbind line, so it comes back once that key is free.
+	Replaced bool `json:"replaced,omitempty"`
 }
 
 type KeybindState struct {
@@ -122,6 +125,9 @@ func buildKeyRows(defaults [][2]string, user []string) ([]KeyRow, []string) {
 		// Whatever was on this key before is replaced.
 		kept := rows[:0]
 		for i, r := range rows {
+			if a == "unbind" && r.Replaced && normTrigger(r.Trigger) == nt {
+				r.Replaced = false // the key is now unbound, not just taken
+			}
 			if r.Enabled && normTrigger(r.Trigger) == nt {
 				if r.Origin == "added" {
 					continue
@@ -130,6 +136,7 @@ func buildKeyRows(defaults [][2]string, user []string) ([]KeyRow, []string) {
 				if a == "unbind" && r.Trigger == r.DefaultTrigger {
 					unbound[i] = true
 				}
+				r.Replaced = a != "unbind" && r.Origin == "default"
 			}
 			kept = append(kept, r)
 		}
@@ -176,6 +183,8 @@ func keybindLines(rows []KeyRow, extra []string) []string {
 			if r.Enabled && r.Trigger != "" {
 				binds = append(binds, r.Trigger+"="+r.Action)
 			}
+		case r.Replaced:
+			// Nothing to write: the binding on this key replaces it in Ghostty.
 		case !r.Enabled:
 			lines = append(lines, r.DefaultTrigger+"=unbind")
 		case normTrigger(r.Trigger) != normTrigger(r.DefaultTrigger):
