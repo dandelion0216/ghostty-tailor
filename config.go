@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 )
 
@@ -105,29 +106,56 @@ func (c *ConfigFile) Set(key, value string) {
 	c.lines = out
 }
 
-// SetAll replaces every line for a repeatable key (palette, keybind, ...) with
-// one line per value, placed where the first existing line was (or at the end).
-// An empty list removes the key.
+// SetFirst changes the first value of a repeatable key and keeps the others,
+// e.g. picking a font keeps the fallback `font-family` lines.
+func (c *ConfigFile) SetFirst(key, value string) {
+	var values []string
+	for _, l := range c.lines {
+		if k, v, ok := parseLine(l); ok && k == key {
+			values = append(values, v)
+		}
+	}
+	if len(values) == 0 {
+		values = []string{value}
+	} else {
+		values[0] = value
+	}
+	c.SetAll(key, values)
+}
+
+// SetAll makes a repeatable key (palette, keybind, font-family, ...) hold
+// exactly values, in order. Existing lines are rewritten where they are, so
+// comments between them stay put; lines whose value is unchanged are kept as
+// written (quotes and all). Extra values go right after the last existing
+// line (or at the end of the file) and surplus lines are removed. An empty
+// list removes the key.
 func (c *ConfigFile) SetAll(key string, values []string) {
 	var out []string
-	placed := false
-	put := func() {
-		for _, v := range values {
-			out = append(out, key+" = "+v)
-		}
-		placed = true
-	}
+	i, last := 0, -1
 	for _, l := range c.lines {
-		if k, _, ok := parseLine(l); ok && k == key {
-			if !placed {
-				put()
-			}
+		k, v, ok := parseLine(l)
+		if !ok || k != key {
+			out = append(out, l)
 			continue
 		}
-		out = append(out, l)
+		if i < len(values) {
+			if v == values[i] {
+				out = append(out, l)
+			} else {
+				out = append(out, key+" = "+values[i])
+			}
+			last = len(out) - 1
+			i++
+		}
 	}
-	if !placed {
-		put()
+	var rest []string
+	for ; i < len(values); i++ {
+		rest = append(rest, key+" = "+values[i])
+	}
+	if last < 0 {
+		out = append(out, rest...)
+	} else {
+		out = slices.Insert(out, last+1, rest...)
 	}
 	c.lines = out
 }

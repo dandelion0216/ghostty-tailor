@@ -92,7 +92,7 @@ Launch ghostty-tailor while Ghostty is installed. It reads your config file (sho
 - **Live reload:** after each change ghostty-tailor asks the running Ghostty to reload its config.
   - macOS: via AppleScript. The first time, macOS asks whether ghostty-tailor may control Ghostty — allow it to get live reload. If you deny it, changes are still saved and take effect the next time Ghostty reloads its config.
   - Linux: by sending `SIGUSR2` to your own Ghostty processes, which Ghostty 1.2 and later treat as "reload config". With older Ghostty, reload manually (default: `Ctrl+Shift+,`).
-- Other multi-line options are shown in the Advanced tab but cannot be edited there yet.
+- **Options that can be repeated** (`font-family`, `font-feature`, `config-file`, `env`, ...) are edited as a list in the Advanced tab: add, remove and reorder values. Picking a font in the Font tab only changes the first `font-family`, so fallback fonts are kept.
 
 ## Stack
 

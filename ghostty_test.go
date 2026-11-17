@@ -36,7 +36,7 @@ func TestParseDocs(t *testing.T) {
 		choices                          []string
 	}{
 		{"language", "text", "", "linux", "restart", nil},
-		{"font-family", "text", "", "font", "live", nil},
+		{"font-family", "repeat", "", "font", "live", nil},
 		{"font-size", "number", "13", "font", "live", nil},
 		{"cursor-style", "enum", "block", "cursor", "live", []string{"block", "bar", "underline", "block_hollow"}},
 		{"background", "color", "#282c34", "colors", "live", nil},
@@ -153,5 +153,27 @@ func TestLuminance(t *testing.T) {
 	}
 	if l := luminance("not-a-color"); l != 0 {
 		t.Errorf("invalid = %v", l)
+	}
+}
+
+func TestIsRepeatable(t *testing.T) {
+	tests := []struct {
+		key, doc string
+		want     bool
+	}{
+		{"font-family", "", true}, // listed
+		{"custom-shader", "", true},
+		{"future-paths", "Load a file.\n\nThis configuration can be\nrepeated to load several.", true}, // from the docs, across a line break
+		{"future-css", "This can be repeated multiple times to load more.", true},
+		{"future-variation", "A repeatable configuration to set values.", true},
+		{"future-feature", "You can repeat this multiple times.", true},
+		{"undo-timeout", "Examples: `1h30m`. Units can be repeated and will be added together.", false},
+		{"click-repeat-interval", "The time between clicks to consider a click a repeat.", false},
+		{"font-size", "Font size in points.", false},
+	}
+	for _, tt := range tests {
+		if got := isRepeatable(tt.key, tt.doc); got != tt.want {
+			t.Errorf("isRepeatable(%q) = %v, want %v", tt.key, got, tt.want)
+		}
 	}
 }

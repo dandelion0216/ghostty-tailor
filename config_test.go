@@ -210,3 +210,42 @@ func TestConfigSetAllAppendsAndRemoves(t *testing.T) {
 		t.Errorf("file after SetAll(nil) = %q", got)
 	}
 }
+
+func TestConfigSetAllRewritesLinesWhereTheyAre(t *testing.T) {
+	c := writeConfig(t, `font-family = "JetBrains Mono"
+# CJK fallback
+font-family = Noto Sans CJK JP
+font-size = 14
+`)
+	c.SetAll("font-family", []string{"JetBrains Mono", "Hiragino Sans", "Symbols Nerd Font"})
+	want := `font-family = "JetBrains Mono"
+# CJK fallback
+font-family = Hiragino Sans
+font-family = Symbols Nerd Font
+font-size = 14
+`
+	if got := saveAndRead(t, c); got != want {
+		t.Errorf("file after SetAll:\n%s\nwant:\n%s", got, want)
+	}
+
+	// Fewer values: surplus lines go, the comment stays.
+	c.SetAll("font-family", []string{"Hiragino Sans"})
+	want = "font-family = Hiragino Sans\n# CJK fallback\nfont-size = 14\n"
+	if got := saveAndRead(t, c); got != want {
+		t.Errorf("file after shrinking:\n%s\nwant:\n%s", got, want)
+	}
+}
+
+func TestConfigSetFirstKeepsOtherValues(t *testing.T) {
+	c := writeConfig(t, "font-family = JetBrains Mono\nfont-family = Noto Sans CJK JP\n")
+	c.SetFirst("font-family", "Fira Code")
+	if got := saveAndRead(t, c); got != "font-family = Fira Code\nfont-family = Noto Sans CJK JP\n" {
+		t.Errorf("file after SetFirst = %q", got)
+	}
+
+	c = writeConfig(t, "theme = Nord\n")
+	c.SetFirst("font-family", "Fira Code")
+	if got := saveAndRead(t, c); got != "theme = Nord\nfont-family = Fira Code\n" {
+		t.Errorf("file after SetFirst on a new key = %q", got)
+	}
+}
