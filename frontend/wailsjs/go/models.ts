@@ -87,6 +87,7 @@ export namespace main {
 	    defaultTrigger: string;
 	    enabled: boolean;
 	    origin: string;
+	    replaced?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new KeyRow(source);
@@ -100,6 +101,7 @@ export namespace main {
 	        this.defaultTrigger = source["defaultTrigger"];
 	        this.enabled = source["enabled"];
 	        this.origin = source["origin"];
+	        this.replaced = source["replaced"];
 	    }
 	}
 	export class KeybindState {

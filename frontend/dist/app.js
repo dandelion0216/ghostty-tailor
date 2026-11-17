@@ -600,12 +600,13 @@ function finishRecording(trig) {
     const group = keyGroups(keys.rows).find((g) => g.id === id);
     for (const r of rows) {
       if (!group.ids.includes(r.id)) continue;
-      if (r.id === id) { r.trigger = trig; r.enabled = true; } else r.enabled = false;
+      if (r.id === id) { r.trigger = trig; r.enabled = true; r.replaced = false; } else r.enabled = false;
     }
     target = rows.find((r) => r.id === id);
   }
   const others = rows.filter((r) => r !== target && r.enabled && normTrig(r.trigger) === normTrig(trig));
-  others.forEach((r) => { r.enabled = false; });
+  // A default on its own key is only replaced, so it comes back if this binding goes away.
+  others.forEach((r) => { r.enabled = false; r.replaced = r.origin === 'default'; });
   if (others.length) setTimeout(() => toast(t('keyConflict', formatTrigger(trig), actionLabel(others[0].action))), 2300);
   saveKeys(rows);
 }
@@ -627,7 +628,7 @@ function keyRow(r) {
     r.origin === 'added'
       ? el('button', { class: 'kb-del', title: t('remove'), onclick: () => saveKeys(keys.rows.filter((x) => x.id !== r.id)) }, '×')
       : el('input', { type: 'checkbox', checked: r.enabled,
-          onchange: (e) => saveKeys(keys.rows.map((x) => (r.ids.includes(x.id) ? { ...x, enabled: e.target.checked } : x))) }),
+          onchange: (e) => saveKeys(keys.rows.map((x) => (r.ids.includes(x.id) ? { ...x, enabled: e.target.checked, replaced: false } : x))) }),
     el('div', { class: 'kb-name' }, actionLabel(r.action),
       r.origin !== 'default' ? el('span', { class: 'tag' }, t(r.origin === 'added' ? 'tagAdded' : 'tagChanged')) : null,
       el('small', {}, r.action)),

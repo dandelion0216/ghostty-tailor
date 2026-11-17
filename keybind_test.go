@@ -151,6 +151,46 @@ func TestKeybindLinesFromEdits(t *testing.T) {
 	}
 }
 
+func TestReplacedDefaultComesBack(t *testing.T) {
+	// new_split:down recorded on super+d, which new_split:right uses by default.
+	rows, _ := buildKeyRows(testDefaults, nil)
+	rows[1].Enabled, rows[1].Replaced = false, true
+	rows[2].Trigger, rows[2].Origin = "super+d", "changed"
+	got := keybindLines(rows, nil)
+	want := []string{"super+shift+d=unbind", "super+d=new_split:down"}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("lines = %v, want %v", got, want)
+	}
+	again, _ := buildKeyRows(testDefaults, got)
+	if !reflect.DeepEqual(again, rows) {
+		t.Errorf("round trip changed rows:\n%+v\n%+v", again, rows)
+	}
+	// Moving new_split:down back leaves new_split:right's key free again.
+	again[2].Trigger = "super+shift+d"
+	if got := keybindLines(again, nil); len(got) != 0 {
+		t.Errorf("reset should write nothing, got %v", got)
+	}
+}
+
+func TestDisabledDefaultStaysDisabledUnderAnotherBinding(t *testing.T) {
+	// The user turned new_split:right off and then put another action on its key.
+	user := []string{"super+d=unbind", "super+d=new_window"}
+	rows, _ := buildKeyRows(testDefaults, user)
+	if m := rowsByID(rows); m["d1"].Enabled || m["d1"].Replaced {
+		t.Fatalf("new_split:right should be disabled, not replaced: %+v", m["d1"])
+	}
+	if got := keybindLines(rows, nil); !reflect.DeepEqual(got, user) {
+		t.Errorf("lines = %v, want %v", got, user)
+	}
+}
+
+func TestUnbindAfterReplacingKeepsTheKeyFree(t *testing.T) {
+	rows, _ := buildKeyRows(testDefaults, []string{"super+d=new_window", "super+d=unbind"})
+	if got, want := keybindLines(rows, nil), []string{"super+d=unbind"}; !reflect.DeepEqual(got, want) {
+		t.Errorf("lines = %v, want %v", got, want)
+	}
+}
+
 func TestSetKeybinds(t *testing.T) {
 	a := newTestApp(t, "theme = Nord\nkeybind = super+9=unbind\n", 0, reloadOK)
 	a.defaultKeys = testDefaults
