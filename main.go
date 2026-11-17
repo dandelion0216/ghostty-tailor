@@ -15,6 +15,7 @@ import (
 var assets embed.FS
 
 func main() {
+	applyDarkPreference()
 	app := NewApp()
 	err := wails.Run(&options.App{
 		Title:       "ghostty-tailor",

@@ -177,3 +177,17 @@ func TestIsRepeatable(t *testing.T) {
 		}
 	}
 }
+
+func TestKeepMono(t *testing.T) {
+	mono := map[string]bool{}
+	addFamilies(mono, "DejaVu Sans Mono\nNoto Sans Mono CJK JP,Noto Sans Mono CJK JP Regular\n\n")
+	fonts := []string{"C059", "DejaVu Sans", "DejaVu Sans Mono", "Noto Sans Mono CJK JP Regular"}
+	got := keepMono(fonts, mono)
+	want := []string{"DejaVu Sans Mono", "Noto Sans Mono CJK JP Regular"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("keepMono() = %v, want %v", got, want)
+	}
+	if got := keepMono(fonts, nil); !reflect.DeepEqual(got, fonts) {
+		t.Errorf("keepMono(nil) = %v, want the list unchanged", got)
+	}
+}
