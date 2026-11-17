@@ -36,6 +36,8 @@ const I18N = {
     saved: 'Saved', failed: 'Failed',
     editInTab: 'Edit this in the {0} tab', addValue: 'Add a value', emptyValue: '(empty: clears earlier values)',
     moveUp: 'Move up', moveDown: 'Move down', fontFallbacks: 'Fallback fonts: {0}',
+    incWins: 'Also set in {0} ({1}). That file is loaded later, so its value is used.',
+    incAdded: 'Also set in {0}: {1}. These values are added to the ones here.',
     followTheme: 'From theme', unset: '(not set)',
     'reload.newwindow': 'New windows only', 'reload.restart': 'Restart required',
     moreDoc: 'Details', resetTitle: 'Remove this line from the config file and use the default', reset: 'Reset',
@@ -74,6 +76,8 @@ const I18N = {
     saved: '保存しました', failed: '失敗しました',
     editInTab: '「{0}」タブで編集できます', addValue: '値を追加', emptyValue: '（空: それまでの値を取り消す）',
     moveUp: '上へ', moveDown: '下へ', fontFallbacks: '代替フォント: {0}',
+    incWins: '{0} でも設定されています（{1}）。そちらが後から読み込まれるため、その値が使われます。',
+    incAdded: '{0} でも設定されています: {1}。ここでの値に追加されます。',
     followTheme: 'テーマに従う', unset: '(未設定)',
     'reload.newwindow': '新しいウィンドウから', 'reload.restart': '再起動が必要',
     moreDoc: '詳しい説明', resetTitle: 'この行を設定ファイルから消して既定値に戻す', reset: '既定に戻す',
@@ -161,6 +165,7 @@ function debounce(fn, ms) {
 async function apply(promise, rerender = false) {
   const res = await promise;
   if (res.set) state.set = res.set;
+  if (res.included) state.included = res.included;
   toast(res.message || t(res.ok ? 'saved' : 'failed'), !res.ok);
   if (rerender || !res.ok) render(true);
   else refreshRows();
@@ -256,6 +261,20 @@ function listControl(o, val) {
   return el('div', { class: 'list' }, rows, add);
 }
 
+// Values set in files loaded with config-file. Those files are read after the
+// main one, so the last value of a normal option wins, and the values of a
+// repeatable option are added.
+function includedNote(key) {
+  const inc = state.included && state.included[key];
+  if (!inc || !inc.length) return null;
+  if (byKey[key] && byKey[key].kind === 'repeat') {
+    const files = [...new Set(inc.map((i) => i.file))].join(', ');
+    return el('div', { class: 'inc' }, t('incAdded', files, inc.map((i) => i.value).join(', ')));
+  }
+  const last = inc[inc.length - 1];
+  return el('div', { class: 'inc' }, t('incWins', last.file, last.value));
+}
+
 const HAS_RELOAD_LABEL = { newwindow: true, restart: true };
 
 function optRow(o) {
@@ -266,6 +285,7 @@ function optRow(o) {
         el('code', { class: 'key' }, o.key),
         HAS_RELOAD_LABEL[o.reload] ? el('span', { class: 'badge ' + o.reload }, t('reload.' + o.reload)) : null,
         el('div', { class: 'sum' }, summaryOf(o)),
+        includedNote(o.key),
         docOf(o).length > summaryOf(o).length + 20 ? el('details', {}, el('summary', {}, t('moreDoc')), el('pre', {}, docOf(o))) : null),
       el('div', { class: 'ctl' },
         control(o),
@@ -331,6 +351,7 @@ function themePane() {
       el('span', { class: 'muted' }, t('current'), el('b', {}, state.set.theme || t('defaultTheme'))),
       state.set.theme ? el('button', { class: 'reset', onclick: () => resetOpt('theme') }, t('reset')) : null),
     overridden.length ? el('div', { class: 'note' }, t('themeOverridden', overridden.join(', '))) : null,
+    includedNote('theme'),
     grid,
   ].filter(Boolean));
   fill();
@@ -418,7 +439,8 @@ function fontPane() {
     el('h3', {}, t('font')),
     el('div', { class: 'opt' + (fam ? ' changed' : '') },
       el('div', { class: 'row' },
-        el('div', { class: 'info' }, el('code', { class: 'key' }, 'font-family'), el('div', { class: 'sum' }, byKey['font-family'] && summaryOf(byKey['font-family']))),
+        el('div', { class: 'info' }, el('code', { class: 'key' }, 'font-family'), el('div', { class: 'sum' }, byKey['font-family'] && summaryOf(byKey['font-family'])),
+          includedNote('font-family')),
         el('div', { class: 'ctl' },
           fallbacks.length ? el('span', { class: 'muted small' }, t('fontFallbacks', fallbacks.join(', '))) : null,
           fonts ? el('span', { class: 'muted small' }, t('fontHint')) : el('span', { class: 'muted' }, t('loadingFonts')),
@@ -696,6 +718,7 @@ const HISTORY_LIMIT = 50;
 // After an import or restore everything shown may be stale.
 function reloadAll(res) {
   if (res.set) state.set = res.set;
+  if (res.included) state.included = res.included;
   keys = null;
   history = null;
   importing = null;
