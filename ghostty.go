@@ -219,8 +219,12 @@ func themeDirs(bin string) []string {
 			filepath.Join(filepath.Dir(real), "../share/ghostty/themes"),
 			filepath.Join(filepath.Dir(real), "../Resources/ghostty/themes"))
 	}
-	return append(dirs, "/usr/share/ghostty/themes", "/usr/local/share/ghostty/themes")
+	return append(dirs, systemThemeDirs...)
 }
+
+// Where distribution packages put the themes. Cleared in tests so they do not
+// read a Ghostty installed on the machine.
+var systemThemeDirs = []string{"/usr/share/ghostty/themes", "/usr/local/share/ghostty/themes"}
 
 func loadThemes(bin string) []Theme {
 	seen := map[string]bool{}
