@@ -8,7 +8,7 @@
 
 [Ghostty](https://ghostty.org) の設定を GUI で仕立てるアプリです。すべての設定項目を一覧・変更でき、変更は起動中のターミナルにすぐ反映されます。
 
-> **ステータス:** 試作段階です。macOS では Homebrew でインストールできます（[インストール](#インストール)を参照）。
+> **ステータス:** 1.0 前の 0.x 版です。macOS と Linux で動き、Homebrew でインストールできます（[インストール](#インストール)を参照）。ご意見は [Issues](https://github.com/dandelion0216/ghostty-tailor/issues) へどうぞ。
 
 ## なぜ作ったか
 
@@ -33,7 +33,7 @@ Ghostty の設定はテキストファイルで行います。柔軟な反面、
 - Ghostty に同梱の説明文付きで、すべての設定項目を一覧・検索できる
 - テーマ・色・フォントを見た目で選べる。16 色のパレットも編集できる
 - macOS のシステム設定と同じ感覚でショートカットを変更できる（クリックして新しいキーを押すだけ）
-- 変更を起動中の Ghostty にすぐ反映する（macOS のみ）
+- 変更を起動中の Ghostty にすぐ反映する（macOS・Linux）
 - 英語と日本語の画面に対応。設定項目の説明文も日本語訳を同梱
 - 既存の設定ファイルを読みやすいまま保つ。書き換えるのは変更した項目の行だけで、コメントなどはそのまま残る
 - 変更のたびに `ghostty +validate-config` で検証し、不正な値なら自動で元に戻す
@@ -57,8 +57,6 @@ brew install dandelion0216/tap/ghostty-tailor
 ```sh
 mkdir -p ~/Applications && ln -sf "$(brew --prefix)/opt/ghostty-tailor/ghostty-tailor.app" ~/Applications/
 ```
-
-[Ghostty](https://ghostty.org) 1.x が必要です。
 
 ### Homebrew（Linux）
 
