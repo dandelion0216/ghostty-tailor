@@ -8,7 +8,7 @@ English | [日本語](README.ja.md)
 
 A GUI for tailoring your [Ghostty](https://ghostty.org) configuration — browse every option, tweak it, and see the change in your running terminal right away.
 
-> **Status:** early prototype. Install it with Homebrew on macOS (see [Install](#install)).
+> **Status:** 0.x, before 1.0. Works on macOS and Linux; install it with Homebrew (see [Install](#install)). Feedback is welcome in [Issues](https://github.com/dandelion0216/ghostty-tailor/issues).
 
 ## Why
 
@@ -33,7 +33,7 @@ Ghostty is configured with a plain text file. It is powerful, but it is hard to 
 - Browse and search every config option, with the documentation Ghostty ships with
 - Pick themes, colors and fonts visually, and edit the 16-color palette
 - Change keyboard shortcuts like in macOS System Settings: click a shortcut and press the new keys
-- Apply changes to the running Ghostty instantly (live reload, macOS)
+- Apply changes to the running Ghostty instantly (live reload, macOS and Linux)
 - English and Japanese UI, including Japanese translations of the option documentation
 - Keep your existing config file readable — only the lines for the options you change are rewritten; comments and everything else stay as they are
 - Every change is checked with `ghostty +validate-config`; an invalid change is rolled back automatically
@@ -57,8 +57,6 @@ Then start it with `ghostty-tailor`. The app is built from source on your Mac du
 ```sh
 mkdir -p ~/Applications && ln -sf "$(brew --prefix)/opt/ghostty-tailor/ghostty-tailor.app" ~/Applications/
 ```
-
-Requires [Ghostty](https://ghostty.org) 1.x.
 
 ### Homebrew (Linux)
 
